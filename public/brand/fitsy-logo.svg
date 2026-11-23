@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 110" role="img" aria-label="fitsy — main character fits. on budget.">
+  <g transform="translate(4 6)"><g transform="rotate(-7 48 48)">
+    <rect x="9" y="11" width="78" height="78" rx="26" fill="#1F1F1F"/>
+    <rect x="6" y="8" width="78" height="78" rx="26" fill="#C8F169" stroke="#1F1F1F" stroke-width="3"/>
+    <path d="M45 50 V45 a6 6 0 1 1 6 -6" fill="none" stroke="#1F1F1F" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M45 50 L20 69 H70 Z" fill="none" stroke="#1F1F1F" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+  </g></g>
+  <text x="112" y="66" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="58" letter-spacing="-3" fill="#1F1F1F">fitsy</text>
+  <rect x="114" y="76" width="226" height="22" rx="11" fill="#C8F169" stroke="#1F1F1F" stroke-width="1.5"/>
+  <text x="227" y="91.5" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="11" fill="#1F1F1F">main character fits. on budget.</text>
+</svg>
