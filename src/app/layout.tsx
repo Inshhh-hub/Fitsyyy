@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Navbar />
             <main className="mx-auto min-h-[calc(100vh-4rem)] max-w-6xl px-4 py-10 sm:px-6">{children}</main>
             <footer className="border-t border-beige-deep/60 py-8 text-center text-xs text-taupe">
-              © {new Date().getFullYear()} fitsy · Styling suggestions, not guarantees. Prices and availability come from the product source shown on each item.
+              © {new Date().getFullYear()} fitsy · Styling suggestions, not guarantees. Some links are affiliate links, so we may earn a commission at no extra cost to you. Prices and availability come from the product source shown on each item and can change.
             </footer>
           </StyleProvider>
         </ToastProvider>

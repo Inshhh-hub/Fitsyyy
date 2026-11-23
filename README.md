@@ -90,6 +90,30 @@ The API returns normalised outfits (`items[]` with `name`, `price`, `brand`, `pr
 
 Items without an `https` product URL are dropped. `slot` ∈ upper, outer, lower, footwear, watch, belt, eyewear, bag, bracelet, chain, cap, wallet; `groups` ∈ casual, formal, party, ethnic, sport. Add the image host to `next.config.mjs` only if you switch to `next/image` (the app uses plain `<img>` today). Use affiliate programmes / merchant feeds that permit this use (Myntra, Ajio, Amazon India, Flipkart, etc. each have their own terms); don't scrape.
 
+## Connect real products (Flipkart, step by step)
+
+1. Join the Flipkart Affiliate Program at affiliate.flipkart.com and get approved.
+2. In the dashboard open the API section and click **Generate API Token** (one token per account; generating a new one disables the old).
+3. Locally: `FLIPKART_AFFILIATE_ID=<tracking id> FLIPKART_AFFILIATE_TOKEN=<token> npm run sync:flipkart:list` prints the category names. Then run `npm run sync:flipkart` (optionally `FLIPKART_CATEGORIES=a,b,c`). It writes `data/products.json` with real products, prices, images and `dl.flipkart.com` product links (your tracking id is already in them).
+4. Commit `data/products.json` and push. fitsy detects it automatically and switches off demo data.
+5. Keep it fresh: in GitHub → Settings → Secrets → Actions add `FLIPKART_AFFILIATE_ID` and `FLIPKART_AFFILIATE_TOKEN`. `.github/workflows/sync-products.yml` then refreshes the file daily and Vercel redeploys.
+
+Flipkart feed links expire after 10 hours and return 500 items per page, which is why products are synced to a file instead of fetched live. Check the sync log: items we can't classify (unknown slot or colour) are skipped, so look at the "By slot" counts. Myntra/Ajio don't run direct programs; they're available through networks such as Cuelinks, vCommission or Admitad. If a network gives you a product feed, convert it to the same JSON shape and merge it into `data/products.json`. Amazon's PA-API is being replaced by the Creators API and requires qualifying sales, so it's a poor first choice.
+
+## Add Myntra, Ajio and Amazon
+
+None of the three has a free public product API, so each needs an approved affiliate account. `npm run import:feed` takes a product feed and merges it into `data/products.json` (other merchants are kept; only that merchant's rows are replaced).
+
+**Myntra and Ajio** (via an affiliate network such as Admitad, vCommission or Cuelinks):
+1. Create a publisher account on the network and apply to the Myntra / Ajio program. Approval is by the network and brand.
+2. Once approved, open the program's **product feed / data feed** (YML, XML or CSV) and copy its URL. Not every program offers one; ask the network's support.
+3. Run `npm run import:feed -- --merchant Myntra --src "<feed url>"` (and the same for Ajio). If your CSV uses different column names, add `--map name=title,price=sale_price,url=link,image=img`.
+4. Commit `data/products.json` and push.
+
+**Amazon**: the old PA-API was retired on May 15, 2026 in favour of the Creators API, which requires an approved Associates account with qualifying sales. When you have access, export products to a CSV/JSON in the same shape and use the same `import:feed` command with `--merchant Amazon`. A live Amazon adapter is not included.
+
+Links are only kept if they are https product or tracking links, and items we can't place into a slot or colour are skipped (see the printed counts).
+
 ## Self-hosting MediaPipe (optional)
 
 By default WASM loads from jsDelivr and the model from Google storage. To self-host: copy `node_modules/@mediapipe/tasks-vision/wasm` to `public/mediapipe/wasm`, download `face_landmarker.task` to `public/mediapipe/`, and set `NEXT_PUBLIC_MEDIAPIPE_WASM_URL=/mediapipe/wasm` and `NEXT_PUBLIC_MEDIAPIPE_MODEL_URL=/mediapipe/face_landmarker.task`.

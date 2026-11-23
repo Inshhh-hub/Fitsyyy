@@ -10,7 +10,7 @@ import type { ProductProvider } from "./types";
  * or { products: [...] } of items matching `feedItemSchema`.
  * Items without an https product URL are DROPPED so we never show an unlinkable "live" product.
  */
-const feedItemSchema = z.object({
+export const feedItemSchema = z.object({
   id: z.string().min(1).max(80),
   name: z.string().min(1).max(160),
   brand: z.string().min(1).max(80),

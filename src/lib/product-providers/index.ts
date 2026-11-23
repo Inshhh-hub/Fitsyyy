@@ -1,4 +1,5 @@
 import type { Product } from "@/types";
+import { catalogFileProvider } from "./catalog-file";
 import { demoProvider } from "./demo";
 import { feedProvider } from "./feed";
 import type { ProductProvider, ProductQuery } from "./types";
@@ -7,7 +8,7 @@ import type { ProductProvider, ProductQuery } from "./types";
  * Register new retailers / affiliate APIs here. Live providers take precedence;
  * the sample catalogue is used ONLY when no live provider is configured.
  */
-const LIVE_PROVIDERS: ProductProvider[] = [feedProvider];
+const LIVE_PROVIDERS: ProductProvider[] = [catalogFileProvider, feedProvider];
 
 export function activeProviders(): ProductProvider[] {
   const live = LIVE_PROVIDERS.filter((p) => p.isConfigured());

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Heart, LogOut, Mail, Pencil, Trash2 } from "lucide-react";
-import { OutfitPreview } from "@/components/outfit-cards/OutfitPreview";
+import { OutfitImages } from "@/components/outfit-cards/OutfitImages";
 import { ProductRow } from "@/components/product-cards/ProductRow";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Badge, Card, Field, Modal, Skeleton } from "@/components/ui/primitives";
@@ -182,7 +182,7 @@ export default function ProfilePage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {saved.map((o) => (
               <Card key={o.id} className="flex gap-4 p-4">
-                <OutfitPreview items={o.items} className="h-36 w-auto shrink-0" />
+                <OutfitImages items={o.items} compact className="h-36 w-28 shrink-0" />
                 <div className="flex min-w-0 flex-1 flex-col">
                   <p className="text-[11px] uppercase tracking-wide text-taupe">{getOccasion(o.occasionId).id === "others" ? o.occasionLabel : getOccasion(o.occasionId).label}</p>
                   <p className="font-serif text-xl leading-tight">{o.name}</p>

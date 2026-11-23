@@ -11,7 +11,7 @@ import { ProductRow, ProductThumb, ShopLink } from "@/components/product-cards/P
 import { ReplaceModal } from "@/components/product-cards/ReplaceModal";
 import { replaceItem } from "@/lib/recommendations/budget";
 import { cn, formatINR } from "@/lib/utils";
-import { OutfitPreview } from "./OutfitPreview";
+import { OutfitImages } from "./OutfitImages";
 
 interface Props {
   outfit: Outfit;
@@ -38,27 +38,12 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
   const [open, setOpen] = useState(false);
   const [shop, setShop] = useState(false);
   const [replacing, setReplacing] = useState<Product | null>(null);
-  const [view, setView] = useState<"illustration" | "products">("illustration");
-  const hasImages = outfit.items.some((i) => i.imageUrl);
   const sample = outfit.items.some((i) => i.isSample);
 
   return (
     <motion.article layout className="flex flex-col overflow-hidden rounded-3xl border border-beige-deep/70 bg-white/70 shadow-soft transition-shadow hover:shadow-lift">
       <div className="relative bg-beige/50 p-4">
-        {view === "illustration" ? (
-          <OutfitPreview items={outfit.items} className="mx-auto h-64 w-auto" />
-        ) : (
-          <div className="grid h-64 grid-cols-3 gap-2">
-            {outfit.items.slice(0, 6).map((i) => <ProductThumb key={i.id} p={i} className="h-full w-full" />)}
-          </div>
-        )}
-        {hasImages && (
-          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1 rounded-full bg-ivory/90 p-1 text-[11px] shadow-soft">
-            {(["illustration", "products"] as const).map((v) => (
-              <button key={v} onClick={() => setView(v)} className={cn("rounded-full px-3 py-1 capitalize", view === v ? "bg-charcoal text-ivory" : "text-taupe-dark")}>{v}</button>
-            ))}
-          </div>
-        )}
+        <OutfitImages items={outfit.items} className="h-80" />
         <div className="absolute left-3 top-3 flex flex-col gap-1.5">
           <Badge tone="dark">{outfit.style}</Badge>
           {outfit.withinBudget ? <Badge tone="sage"><Check size={11} /> Within budget</Badge> : <Badge tone="warn">Over budget</Badge>}

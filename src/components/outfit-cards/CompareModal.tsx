@@ -4,7 +4,7 @@ import type { Outfit, Slot } from "@/types";
 import { Badge, Modal } from "@/components/ui/primitives";
 import { SLOT_LABEL } from "@/lib/recommendations/budget";
 import { formatINR } from "@/lib/utils";
-import { OutfitPreview } from "./OutfitPreview";
+import { OutfitImages } from "./OutfitImages";
 
 const ORDER: Slot[] = ["upper", "outer", "lower", "footwear", "watch", "belt", "eyewear", "bag", "wallet", "bracelet", "chain", "cap"];
 
@@ -19,7 +19,7 @@ export function CompareModal({ outfits, onClose, onRemove }: { outfits: Outfit[]
               <th className="w-28" />
               {outfits.map((o) => (
                 <th key={o.id} className="px-2 pb-3 align-top">
-                  <OutfitPreview items={o.items} className="mx-auto h-40 w-auto" />
+                  <OutfitImages items={o.items} compact className="mx-auto h-40 w-40" />
                   <p className="mt-2 font-serif text-lg leading-tight">{o.name}</p>
                   <p className="text-xs font-normal text-taupe">{o.occasionLabel}</p>
                   <button onClick={() => onRemove(o.id)} className="mt-1 text-xs font-normal text-taupe underline">Remove</button>
