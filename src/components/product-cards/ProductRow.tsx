@@ -28,7 +28,22 @@ export function ShopLink({ p, size = "sm" }: { p: Product; size?: "sm" | "xs" })
       </a>
     );
   }
-  return <span className={cn(cls, "cursor-not-allowed bg-beige text-taupe")} title="Demo data has no real product page">No live link (sample)</span>;
+  const q = (p.searchQuery ?? `${p.gender === "women" ? "women" : p.gender === "men" ? "men" : ""} ${p.colour} ${p.subtype}`).replace(/\s+/g, " ").trim();
+  const enc = encodeURIComponent(q);
+  const links: Array<[string, string]> = [
+    ["Flipkart", `https://www.flipkart.com/search?q=${enc}`],
+    ["Myntra", `https://www.myntra.com/${q.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`],
+    ["Ajio", `https://www.ajio.com/search/?text=${enc}`],
+    ["Amazon", `https://www.amazon.in/s?k=${enc}`],
+  ];
+  return (
+    <span className="flex flex-wrap items-center gap-1" title="Search results for a similar item. Not a direct product link.">
+      <span className="text-[11px] text-taupe">Search:</span>
+      {links.map(([name, href]) => (
+        <a key={name} href={href} target="_blank" rel="noopener noreferrer" className={cn(cls, "bg-beige text-charcoal transition hover:bg-beige-deep")}>{name}</a>
+      ))}
+    </span>
+  );
 }
 
 interface Props {

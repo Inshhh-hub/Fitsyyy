@@ -6,7 +6,7 @@ import { SLOT_LABEL } from "@/lib/recommendations/budget";
 import { formatINR } from "@/lib/utils";
 import { OutfitImages } from "./OutfitImages";
 
-const ORDER: Slot[] = ["upper", "outer", "lower", "footwear", "watch", "belt", "eyewear", "bag", "wallet", "bracelet", "chain", "cap"];
+const ORDER: Slot[] = ["upper", "outer", "lower", "footwear", "watch", "belt", "eyewear", "bag", "wallet", "bracelet", "chain", "cap", "earrings", "ring", "scarf", "tie", "socks"];
 
 export function CompareModal({ outfits, onClose, onRemove }: { outfits: Outfit[]; onClose: () => void; onRemove: (id: string) => void }) {
   const slots = ORDER.filter((s) => outfits.some((o) => o.items.some((i) => i.slot === s)));

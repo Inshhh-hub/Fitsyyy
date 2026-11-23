@@ -148,6 +148,71 @@ chain|Chain|Silver Chain|899|silver|u|pc|street,minimal,party|b
 chain|Chain|Layered Necklace|1299|gold|w|pc|date,party,minimal|b
 chain|Necklace|Kundan Necklace|2499|gold|w|e|wedding,statement,traditional|m
 cap|Cap|Baseball Cap|599|black|u|cs|street,sporty,value|b
+upper|T-shirt|Acid Wash Oversized Tee|899|grey|u|cp|street,oversized,statement|b
+upper|T-shirt|Vintage Band Tee|999|black|u|cp|street,oversized,statement|b
+upper|T-shirt|Boxy Pocket Tee|699|olive|u|c|street,minimal,earth|b
+upper|T-shirt|Boxy Pocket Tee|699|beige|u|c|street,minimal,earth|b
+upper|T-shirt|Baby Tee|599|white|w|cp|street,date,minimal|b
+upper|T-shirt|Cropped Boxy Tee|649|black|w|cp|street,oversized|b
+upper|Top|Corset Style Top|1199|black|w|p|party,date,statement|m
+upper|Top|Halter Neck Top|899|white|w|p|party,date,minimal|b
+upper|Shirt|Oversized Striped Shirt|1299|lightblue|u|c|street,oversized,smartcasual|b
+upper|Shirt|Linen Camp Collar Shirt|1499|cream|m|cp|smartcasual,date,minimal,earth|b
+upper|Shirt|Printed Resort Shirt|1399|black|m|cp|statement,date,street|b
+upper|Shirt|Printed Resort Shirt|1399|navy|m|cp|statement,date,smartcasual|b
+upper|Sweatshirt|Oversized Crewneck Sweatshirt|1299|beige|u|c|comfy,oversized,street|b
+upper|Hoodie|Oversized Pullover Hoodie|1499|black|u|cp|street,oversized,comfy,monochrome|m
+upper|Hoodie|Oversized Pullover Hoodie|1499|charcoal|u|cp|street,oversized,comfy|m
+upper|Jersey|Retro Football Jersey|1199|navy|u|cp|street,sporty,statement|b
+upper|T-shirt|Plain Cotton Crew Tee|449|black|u|cs|minimal,value,comfy,monochrome|b
+upper|T-shirt|Vintage Graphic Tee|849|white|u|cp|street,oversized,statement|b
+outer|Jacket|Varsity Jacket|2299|maroon|u|cp|street,statement|m
+outer|Jacket|Utility Chore Jacket|1899|olive|u|c|earth,street,smartcasual|m
+outer|Jacket|Trench Coat|3999|beige|u|cf|classic,premium,luxe|p
+outer|Jacket|Puffer Jacket|2799|black|u|cp|street,comfy,premium|m
+lower|Jeans|Baggy Light-Wash Jeans|1999|denim|u|c|street,oversized|b
+lower|Jeans|Ripped Straight Jeans|1799|lightblue|u|cp|street,smartcasual|b
+lower|Jeans|Wide-Leg Light Jeans|1899|lightblue|w|cp|street,date,minimal|b
+lower|Jeans|Washed Black Carpenter Jeans|1999|black|u|cp|street,oversized|m
+lower|Cargo|Parachute Pants|1699|olive|u|cp|street,oversized|b
+lower|Cargo|Parachute Pants|1699|black|u|cp|street,oversized,monochrome|b
+lower|Trousers|Pleated Wide Trousers|1799|black|u|pcf|classic,street,smartcasual,monochrome|m
+lower|Skirt|Pleated Mini Skirt|899|black|w|cp|street,party|b
+lower|Skirt|Denim Mini Skirt|999|denim|w|cp|street,date|b
+lower|Pants|Straight Track Pants|1299|black|u|cs|comfy,street,sporty|b
+lower|Shorts|Baggy Denim Jorts|1499|denim|m|c|street,oversized|b
+lower|Trousers|Wide-Leg Trousers|1599|cream|w|cf|minimal,date,classic|m
+footwear|Sneakers|Chunky Dad Sneakers|1999|white|u|cp|street,oversized,statement|b
+footwear|Sneakers|Retro Low-Top Sneakers|1799|cream|u|c|street,classic,minimal|b
+footwear|Sneakers|High-Top Canvas Sneakers|1599|white|u|c|street,value|b
+footwear|Sneakers|Terrace Style Trainers|2199|white|u|cp|street,classic|m
+footwear|Boots|Combat Boots|2999|black|u|p|street,statement|m
+footwear|Sandals|Platform Sandals|1499|black|w|cp|street,party|b
+cap|Beanie|Knit Beanie|449|black|u|c|street,comfy,value|b
+cap|Cap|Trucker Cap|549|white|u|c|street,value|b
+eyewear|Sunglasses|Rectangle Sunglasses|799|black|u|cp|street,minimal|b
+bag|Bag|Mini Shoulder Bag|1299|black|w|cp|street,minimal|b
+bag|Bag|Messenger Bag|1599|black|u|c|street,classic|b
+chain|Chain|Chunky Chain|1099|silver|u|cp|street,statement|b
+chain|Necklace|Pearl Necklace|899|white|w|pc|date,minimal,classic|b
+earrings|Earrings|Pearl Drop Earrings|499|white|w|cpf|minimal,date,classic|b
+earrings|Earrings|Gold-Tone Hoop Earrings|599|gold|w|cp|minimal,party,date|b
+earrings|Earrings|Oxidised Silver Jhumkas|699|silver|w|ce|traditional,street,festive|b
+earrings|Earrings|Kundan Jhumka Earrings|1499|gold|w|e|wedding,traditional,statement|m
+earrings|Earrings|Crystal Stud Earrings|799|silver|w|pf|party,minimal,date|b
+ring|Ring|Plain Steel Band Ring|399|silver|u|cp|minimal,street,value|b
+ring|Ring|Stackable Gold-Tone Rings|699|gold|w|cpe|minimal,date,party|b
+ring|Ring|Signet Ring|999|silver|m|cp|street,classic,statement|b
+scarf|Scarf|Cotton Printed Scarf|599|beige|u|c|earth,smartcasual,comfy|b
+scarf|Stole|Soft Wool Stole|1299|camel|u|cef|premium,classic,earth|m
+scarf|Dupatta|Chanderi Dupatta|1499|maroon|w|e|traditional,festive,wedding|m
+tie|Tie|Slim Navy Tie|699|navy|m|f|formal,classic|b
+tie|Tie|Textured Burgundy Tie|899|burgundy|m|fp|formal,statement,classic|b
+tie|Tie|Charcoal Knit Tie|799|charcoal|m|f|formal,minimal,semiformal|b
+socks|Socks|Cotton Ankle Socks (Pack of 3)|349|white|u|cs|value,sporty,comfy|b
+socks|Socks|Cushioned Sport Socks|499|black|u|s|sporty,value|b
+socks|Socks|Patterned Crew Socks|399|navy|u|cp|street,statement,value|b
+socks|Socks|Formal Dress Socks|449|charcoal|m|f|formal,classic|b
 cap|Cap|Dad Cap|599|beige|u|c|minimal,value|b
 `;
 

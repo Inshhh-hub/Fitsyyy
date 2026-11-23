@@ -15,7 +15,7 @@ export const feedItemSchema = z.object({
   name: z.string().min(1).max(160),
   brand: z.string().min(1).max(80),
   merchant: z.string().min(1).max(60),
-  slot: z.enum(["upper", "outer", "lower", "footwear", "watch", "belt", "eyewear", "bag", "bracelet", "chain", "cap", "wallet"]),
+  slot: z.enum(["upper", "outer", "lower", "footwear", "watch", "belt", "eyewear", "bag", "bracelet", "chain", "cap", "wallet", "earrings", "ring", "scarf", "tie", "socks"]),
   subtype: z.string().max(60).default(""),
   price: z.number().positive().max(1_000_000),
   colour: z.string().max(30).default("grey"),

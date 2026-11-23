@@ -7,7 +7,7 @@ import { productQuerySchema } from "@/lib/validations/schemas";
 
 export const runtime = "nodejs";
 
-const VALID_SLOTS = new Set(["upper", "outer", "lower", "footwear", "watch", "belt", "eyewear", "bag", "bracelet", "chain", "cap", "wallet"]);
+const VALID_SLOTS = new Set(["upper", "outer", "lower", "footwear", "watch", "belt", "eyewear", "bag", "bracelet", "chain", "cap", "wallet", "earrings", "ring", "scarf", "tie", "socks"]);
 
 /** GET /api/products?slot=footwear&gender=men&group=casual&maxPrice=2000 — alternatives for "Replace this item". */
 export async function GET(req: Request) {

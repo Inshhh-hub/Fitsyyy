@@ -12,6 +12,8 @@ import { ReplaceModal } from "@/components/product-cards/ReplaceModal";
 import { replaceItem } from "@/lib/recommendations/budget";
 import { cn, formatINR } from "@/lib/utils";
 import { OutfitImages } from "./OutfitImages";
+import { InspirationPhotos } from "./InspirationPhotos";
+import { AiPreview } from "./AiPreview";
 
 interface Props {
   outfit: Outfit;
@@ -39,13 +41,27 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
   const [shop, setShop] = useState(false);
   const [replacing, setReplacing] = useState<Product | null>(null);
   const sample = outfit.items.some((i) => i.isSample);
+  const [hasInspo, setHasInspo] = useState(false);
+  const [aiImg, setAiImg] = useState<string | null>(null);
+  const core = outfit.items.filter((i) => ["upper", "lower", "footwear"].includes(i.slot)).map((i) => `${i.colour} ${i.subtype}`.toLowerCase());
+  const who = gender === "women" ? "women" : gender === "men" ? "men" : "";
+  const inspoQuery = (outfit.photoQuery ? (outfit.curated ? outfit.photoQuery : `${who} ${outfit.photoQuery}`) : `${who} wearing ${core.join(" ")} outfit`).replace(/\s+/g, " ").trim().slice(0, 80);
+  const approx = sample ? "≈ " : "";
 
   return (
     <motion.article layout className="flex flex-col overflow-hidden rounded-3xl border border-beige-deep/70 bg-white/70 shadow-soft transition-shadow hover:shadow-lift">
       <div className="relative bg-beige/50 p-4">
-        <OutfitImages items={outfit.items} className="h-80" />
+        {aiImg ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={aiImg} alt="AI-generated preview of this outfit" className="h-80 w-full rounded-2xl bg-white object-contain" />
+        ) : (
+          <>
+            <InspirationPhotos query={inspoQuery} fixed={outfit.lookPhoto} onLoaded={setHasInspo} className="h-80" />
+            {!hasInspo && <OutfitImages items={outfit.items} className="h-80" />}
+          </>
+        )}
         <div className="absolute left-3 top-3 flex flex-col gap-1.5">
-          <Badge tone="dark">{outfit.style}</Badge>
+          <Badge tone="dark">{outfit.curated ? `${outfit.style} · curated` : outfit.style}</Badge>
           {outfit.withinBudget ? <Badge tone="sage"><Check size={11} /> Within budget</Badge> : <Badge tone="warn">Over budget</Badge>}
         </div>
         <div className="absolute right-3 top-3 flex h-12 w-12 flex-col items-center justify-center rounded-full bg-ivory text-charcoal shadow-soft" title="Suitability score">
@@ -56,6 +72,7 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
           {outfit.items.map((i) => <span key={i.id} className="h-3.5 w-3.5 rounded-full border border-charcoal/20" style={{ background: i.hex }} />)}
         </div>
       </div>
+      <AiPreview outfit={outfit} gender={gender} onImage={setAiImg} />
 
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
@@ -65,7 +82,7 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
         </div>
         <ul className="space-y-1 text-xs text-taupe-dark">
           {outfit.items.slice(0, 4).map((i) => (
-            <li key={i.id} className="flex justify-between gap-2"><span className="truncate">{i.name}</span><span>{formatINR(i.price)}</span></li>
+            <li key={i.id} className="flex justify-between gap-2"><span className="truncate">{i.name}</span><span>{approx}{formatINR(i.price)}</span></li>
           ))}
           {outfit.items.length > 4 && <li className="text-taupe">+ {outfit.items.length - 4} more</li>}
         </ul>
@@ -137,12 +154,12 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
           {outfit.items.map((i) => (
             <li key={i.id} className="flex items-center gap-3 rounded-2xl border border-beige-deep bg-white/70 p-3">
               <ProductThumb p={i} className="h-12 w-12 shrink-0" />
-              <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{i.name}</p><p className="text-xs text-taupe">{i.merchant} · {formatINR(i.price)}</p></div>
+              <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{i.name}</p><p className="text-xs text-taupe">{i.merchant} · {approx}{formatINR(i.price)}</p></div>
               <ShopLink p={i} />
             </li>
           ))}
         </ul>
-        <p className="mt-4 flex justify-between border-t border-beige-deep pt-3 font-serif text-xl"><span>Total</span><span>{formatINR(outfit.total)}</span></p>
+        <p className="mt-4 flex justify-between border-t border-beige-deep pt-3 font-serif text-xl"><span>{sample ? "Estimated total" : "Total"}</span><span>{approx}{formatINR(outfit.total)}</span></p>
         {sample && <p className="mt-3 rounded-2xl bg-amber-50 p-3 text-xs text-amber-900">These are sample products in demo mode, so there are no real product pages to open. Connect a product feed (see README) to get direct links.</p>}
       </Modal>
     </motion.article>

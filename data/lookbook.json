@@ -1,0 +1,401 @@
+[
+ {
+  "id": "date-resort-men",
+  "name": "Resort Date Night",
+  "occasions": [
+   "date"
+  ],
+  "gender": "men",
+  "tags": [
+   "date",
+   "statement",
+   "smartcasual"
+  ],
+  "photoQuery": "men printed resort shirt cream trousers white sneakers",
+  "items": [
+   {
+    "slot": "upper",
+    "name": "Printed Resort Shirt",
+    "colour": "navy",
+    "price": 1399
+   },
+   {
+    "slot": "lower",
+    "name": "Cream Pleated Trousers",
+    "colour": "cream",
+    "price": 1799
+   },
+   {
+    "slot": "footwear",
+    "name": "Minimal White Sneakers",
+    "colour": "white",
+    "price": 1999
+   },
+   {
+    "slot": "watch",
+    "name": "Minimal Analog Watch",
+    "colour": "silver",
+    "price": 1499
+   }
+  ]
+ },
+ {
+  "id": "date-clean-women",
+  "name": "Clean Girl Date",
+  "occasions": [
+   "date"
+  ],
+  "gender": "women",
+  "tags": [
+   "minimal",
+   "date"
+  ],
+  "photoQuery": "women baby tee wide leg trousers ballet flats date outfit",
+  "items": [
+   {
+    "slot": "upper",
+    "name": "Ribbed Baby Tee",
+    "colour": "white",
+    "price": 599
+   },
+   {
+    "slot": "lower",
+    "name": "Wide-Leg Trousers",
+    "colour": "cream",
+    "price": 1599
+   },
+   {
+    "slot": "footwear",
+    "name": "Ballet Flats",
+    "colour": "cream",
+    "price": 1499
+   },
+   {
+    "slot": "earrings",
+    "name": "Gold-Tone Hoop Earrings",
+    "colour": "gold",
+    "price": 599
+   }
+  ]
+ },
+ {
+  "id": "party-street-men",
+  "name": "Streetwear Night",
+  "occasions": [
+   "clubbing",
+   "birthday"
+  ],
+  "gender": "men",
+  "tags": [
+   "street",
+   "statement",
+   "oversized"
+  ],
+  "photoQuery": "men streetwear oversized tee baggy jeans chunky sneakers",
+  "items": [
+   {
+    "slot": "upper",
+    "name": "Oversized Graphic Tee",
+    "colour": "black",
+    "price": 999
+   },
+   {
+    "slot": "lower",
+    "name": "Baggy Jeans",
+    "colour": "black",
+    "price": 1999
+   },
+   {
+    "slot": "footwear",
+    "name": "Chunky Dad Sneakers",
+    "colour": "white",
+    "price": 1999
+   },
+   {
+    "slot": "chain",
+    "name": "Chunky Chain",
+    "colour": "silver",
+    "price": 1099
+   }
+  ]
+ },
+ {
+  "id": "party-y2k-women",
+  "name": "Y2K Night Out",
+  "occasions": [
+   "clubbing",
+   "birthday"
+  ],
+  "gender": "women",
+  "tags": [
+   "street",
+   "party",
+   "statement"
+  ],
+  "photoQuery": "women y2k outfit corset top baggy jeans night out",
+  "items": [
+   {
+    "slot": "upper",
+    "name": "Corset Style Top",
+    "colour": "black",
+    "price": 1199
+   },
+   {
+    "slot": "lower",
+    "name": "Baggy Jeans",
+    "colour": "denim",
+    "price": 1999
+   },
+   {
+    "slot": "footwear",
+    "name": "Platform Sandals",
+    "colour": "black",
+    "price": 1499
+   },
+   {
+    "slot": "bag",
+    "name": "Mini Shoulder Bag",
+    "colour": "black",
+    "price": 1299
+   }
+  ]
+ },
+ {
+  "id": "casual-baggy-men",
+  "name": "Baggy Fit Basics",
+  "occasions": [
+   "casual",
+   "college",
+   "family"
+  ],
+  "gender": "men",
+  "tags": [
+   "street",
+   "oversized",
+   "comfy"
+  ],
+  "photoQuery": "men oversized tee baggy jeans sneakers street style",
+  "items": [
+   {
+    "slot": "upper",
+    "name": "Boxy Cotton Tee",
+    "colour": "white",
+    "price": 699
+   },
+   {
+    "slot": "lower",
+    "name": "Baggy Light-Wash Jeans",
+    "colour": "denim",
+    "price": 1999
+   },
+   {
+    "slot": "footwear",
+    "name": "Retro Low-Top Sneakers",
+    "colour": "cream",
+    "price": 1799
+   },
+   {
+    "slot": "cap",
+    "name": "Baseball Cap",
+    "colour": "black",
+    "price": 599
+   }
+  ]
+ },
+ {
+  "id": "casual-cargo-women",
+  "name": "Cargo Core",
+  "occasions": [
+   "casual",
+   "college"
+  ],
+  "gender": "women",
+  "tags": [
+   "street",
+   "earth",
+   "oversized"
+  ],
+  "photoQuery": "women cargo pants baby tee sneakers street style",
+  "items": [
+   {
+    "slot": "upper",
+    "name": "Baby Tee",
+    "colour": "white",
+    "price": 599
+   },
+   {
+    "slot": "lower",
+    "name": "Parachute Pants",
+    "colour": "olive",
+    "price": 1699
+   },
+   {
+    "slot": "footwear",
+    "name": "Retro Low-Top Sneakers",
+    "colour": "cream",
+    "price": 1799
+   },
+   {
+    "slot": "bag",
+    "name": "Mini Shoulder Bag",
+    "colour": "black",
+    "price": 1299
+   }
+  ]
+ },
+ {
+  "id": "formal-quiet-men",
+  "name": "Quiet Luxury Office",
+  "occasions": [
+   "interview",
+   "office"
+  ],
+  "gender": "men",
+  "tags": [
+   "formal",
+   "minimal",
+   "premium"
+  ],
+  "photoQuery": "men quiet luxury office outfit shirt trousers derby shoes",
+  "items": [
+   {
+    "slot": "upper",
+    "name": "Formal Cotton Shirt",
+    "colour": "white",
+    "price": 1499
+   },
+   {
+    "slot": "lower",
+    "name": "Slim Formal Trousers",
+    "colour": "charcoal",
+    "price": 1699
+   },
+   {
+    "slot": "footwear",
+    "name": "Leather Derby Shoes",
+    "colour": "black",
+    "price": 2499
+   },
+   {
+    "slot": "belt",
+    "name": "Leather Formal Belt",
+    "colour": "black",
+    "price": 899
+   }
+  ]
+ },
+ {
+  "id": "formal-neutral-women",
+  "name": "Power Neutrals",
+  "occasions": [
+   "interview",
+   "office"
+  ],
+  "gender": "women",
+  "tags": [
+   "formal",
+   "minimal"
+  ],
+  "photoQuery": "women office outfit poplin shirt beige trousers loafers",
+  "items": [
+   {
+    "slot": "upper",
+    "name": "Relaxed Poplin Shirt",
+    "colour": "white",
+    "price": 1299
+   },
+   {
+    "slot": "lower",
+    "name": "Wide-Leg Trousers",
+    "colour": "beige",
+    "price": 1599
+   },
+   {
+    "slot": "footwear",
+    "name": "Women's Loafers",
+    "colour": "black",
+    "price": 1799
+   },
+   {
+    "slot": "watch",
+    "name": "Rose-Tone Dress Watch",
+    "colour": "gold",
+    "price": 1999
+   }
+  ]
+ },
+ {
+  "id": "festival-kurta-men",
+  "name": "Festive Kurta Look",
+  "occasions": [
+   "festival",
+   "wedding"
+  ],
+  "gender": "men",
+  "tags": [
+   "traditional",
+   "festive"
+  ],
+  "photoQuery": "men festive kurta pyjama outfit diwali",
+  "items": [
+   {
+    "slot": "upper",
+    "name": "Printed Festive Kurta",
+    "colour": "rust",
+    "price": 1499
+   },
+   {
+    "slot": "lower",
+    "name": "Cotton Churidar",
+    "colour": "cream",
+    "price": 999
+   },
+   {
+    "slot": "footwear",
+    "name": "Embroidered Mojari",
+    "colour": "gold",
+    "price": 1299
+   }
+  ]
+ },
+ {
+  "id": "festival-kurti-women",
+  "name": "Festive Kurti Look",
+  "occasions": [
+   "festival",
+   "wedding"
+  ],
+  "gender": "women",
+  "tags": [
+   "traditional",
+   "festive"
+  ],
+  "photoQuery": "women festive kurti palazzo outfit diwali",
+  "items": [
+   {
+    "slot": "upper",
+    "name": "Embroidered Anarkali Kurta",
+    "colour": "maroon",
+    "price": 2299
+   },
+   {
+    "slot": "lower",
+    "name": "Cotton Palazzo",
+    "colour": "ivory",
+    "price": 999
+   },
+   {
+    "slot": "footwear",
+    "name": "Zari Juttis",
+    "colour": "gold",
+    "price": 1299
+   },
+   {
+    "slot": "earrings",
+    "name": "Oxidised Silver Jhumkas",
+    "colour": "silver",
+    "price": 699
+   }
+  ]
+ }
+]

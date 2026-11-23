@@ -5,6 +5,7 @@ import { generateWithAi } from "@/lib/ai/stylist";
 import { searchProducts, usingSampleData } from "@/lib/product-providers";
 import { suggestionsFor } from "@/lib/recommendations/appearance";
 import { buildOutfits, resolveOccasion, type EngineContext } from "@/lib/recommendations/engine";
+import { lookbookOutfits } from "@/lib/recommendations/lookbook";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { sanitizeText } from "@/lib/validations/sanitize";
 import { generateRequestSchema } from "@/lib/validations/schemas";
@@ -12,7 +13,7 @@ import { generateRequestSchema } from "@/lib/validations/schemas";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const SLOTS: Slot[] = ["upper", "outer", "lower", "footwear", "watch", "belt", "eyewear", "bag", "bracelet", "chain", "cap", "wallet"];
+const SLOTS: Slot[] = ["upper", "outer", "lower", "footwear", "watch", "belt", "eyewear", "bag", "bracelet", "chain", "cap", "wallet", "earrings", "ring", "scarf", "tie", "socks"];
 
 export async function POST(req: Request) {
   const rl = rateLimit(`gen:${clientIp(req)}`, 12, 60_000);
@@ -79,7 +80,12 @@ export async function POST(req: Request) {
           outfits = r.outfits;
         }
         if (!outfits.length) outfits = buildOutfits(ctx, perOccasion);
-        return { outfits, usedAi: useAi && outfits.length > 0 };
+        const usedAi = useAi && outfits.length > 0;
+        if (round === 0) {
+          const curated = lookbookOutfits(ctx, Math.min(2, perOccasion));
+          outfits = [...curated, ...outfits].slice(0, perOccasion);
+        }
+        return { outfits, usedAi };
       }),
     );
 

@@ -39,11 +39,11 @@ export function resolveOccasion(id: string, custom?: string): Occasion {
 }
 
 const ACCESSORY_PRIORITY: Record<OccasionGroup, Slot[]> = {
-  formal: ["watch", "belt", "bag", "wallet"],
-  party: ["watch", "chain", "eyewear", "bracelet", "belt"],
-  casual: ["watch", "eyewear", "cap", "bag", "belt", "bracelet"],
-  ethnic: ["watch", "bracelet", "chain", "bag"],
-  sport: ["watch", "cap", "bag"],
+  formal: ["watch", "belt", "tie", "bag", "earrings", "wallet", "socks", "ring"],
+  party: ["watch", "chain", "eyewear", "earrings", "bracelet", "ring", "belt", "bag"],
+  casual: ["watch", "eyewear", "cap", "bag", "belt", "bracelet", "socks", "earrings", "ring", "scarf"],
+  ethnic: ["watch", "bracelet", "chain", "earrings", "ring", "bag", "scarf"],
+  sport: ["watch", "cap", "socks", "bag"],
 };
 const SHARE: Record<string, number> = { upper: 0.28, lower: 0.25, footwear: 0.27 };
 const MODE_MUL: Record<PriceMode, number> = { value: 0.8, standard: 0.95, premium: 1.1 };
@@ -53,7 +53,7 @@ const TIER_BONUS: Record<PriceMode, Record<string, number>> = {
   premium: { budget: -0.4, mid: 0.5, premium: 1.2 },
 };
 const TIER_VALUE: Record<string, number> = { budget: 1, mid: 2, premium: 3 };
-const MAX_ITEMS = 8;
+const MAX_ITEMS = 10;
 
 export function seasonNote(date = new Date()): string {
   const m = date.getUTCMonth(); // 0=Jan
@@ -103,6 +103,9 @@ function scoreItem(p: Product, concept: Concept, ctx: EngineContext, prep: Prepa
   else if (NEUTRALS.has(p.colour)) s += 0.5;
   if (concept.bias !== "any" && BIAS_COLOURS[concept.bias].includes(p.colour)) s += 0.8;
   if (prep.liked.has(p.colour)) s += 1.6;
+
+  const recipeRx = concept.recipe?.[p.slot as "upper" | "lower" | "footwear" | "outer"];
+  if (recipeRx && recipeRx.test(`${p.name} ${p.subtype} ${p.colour}`)) s += 4;
 
   const text = `${p.name} ${p.subtype} ${p.tags.join(" ")}`.toLowerCase();
   if (prep.styleWords.some((w) => text.includes(w))) s += 1;
@@ -186,7 +189,7 @@ function assemble(concept: Concept, ctx: EngineContext, prep: Prepared, batchUse
   const extras: Slot[] = [...(concept.outer ? (["outer"] as Slot[]) : []), ...ACCESSORY_PRIORITY[ctx.occasion.group]];
   let accessories = 0;
   for (const slot of extras) {
-    if (chosen.length >= MAX_ITEMS || (slot !== "outer" && accessories >= 4)) break;
+    if (chosen.length >= MAX_ITEMS || (slot !== "outer" && accessories >= 6)) break;
     const remaining = budget - totalPrice(chosen);
     const list = fresh(candidates(slot, ctx, prep, true).filter((p) => p.price <= remaining));
     if (!list.length) continue;
@@ -304,6 +307,7 @@ export function makeOutfit(p: BuildParams): Outfit {
     total,
     withinBudget: within,
     budget,
+    photoQuery: concept.photo,
   };
   return recalc(base, items, budget);
 }
@@ -316,7 +320,7 @@ export function outfitKey(ids: string[]): string {
 export function buildOutfits(ctx: EngineContext, count: number): Outfit[] {
   const prep = prepare(ctx);
   const rnd = seededRandom(ctx.seed);
-  const concepts = conceptsFor(ctx.occasion.conceptSet, count, ctx.round);
+  const concepts = conceptsFor(ctx.occasion.conceptSet, count, ctx.round, ctx.body.category);
   const used = new Set<string>();
   const seen = new Set<string>();
   const out: Outfit[] = [];

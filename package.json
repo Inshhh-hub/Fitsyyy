@@ -9,6 +9,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "sync:flipkart": "node scripts/sync-flipkart.mjs",
+    "import:shopify": "node scripts/import-shopify.mjs",
     "import:feed": "node scripts/import-feed.mjs",
     "sync:flipkart:list": "node scripts/sync-flipkart.mjs --list"
   },

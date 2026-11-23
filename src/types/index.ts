@@ -59,7 +59,12 @@ export type Slot =
   | "bracelet"
   | "chain"
   | "cap"
-  | "wallet";
+  | "wallet"
+  | "earrings"
+  | "ring"
+  | "scarf"
+  | "tie"
+  | "socks";
 
 export type Tier = "budget" | "mid" | "premium";
 
@@ -82,6 +87,8 @@ export interface Product {
   sizes?: string[];
   inStock?: boolean;
   isSample: boolean; // true = demo data, not a real listing
+  /** text used for "search on Flipkart / Myntra / Ajio / Amazon" links when there is no direct product URL */
+  searchQuery?: string;
 }
 
 export interface OutfitReasons {
@@ -114,6 +121,12 @@ export interface Outfit {
   withinBudget: boolean;
   budget: number;
   warning?: string;
+  /** search phrase describing this look, used to find matching inspiration photos */
+  photoQuery?: string;
+  /** a hand-picked real photo for this look (from data/lookbook.json) */
+  lookPhoto?: { unsplashId?: string; url?: string; credit?: string; creditUrl?: string };
+  /** true when this is a hand-curated look from data/lookbook.json */
+  curated?: boolean;
 }
 
 export interface GenerateResponse {

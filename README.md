@@ -100,6 +100,25 @@ Items without an `https` product URL are dropped. `slot` ∈ upper, outer, lower
 
 Flipkart feed links expire after 10 hours and return 500 items per page, which is why products are synced to a file instead of fetched live. Check the sync log: items we can't classify (unknown slot or colour) are skipped, so look at the "By slot" counts. Myntra/Ajio don't run direct programs; they're available through networks such as Cuelinks, vCommission or Admitad. If a network gives you a product feed, convert it to the same JSON shape and merge it into `data/products.json`. Amazon's PA-API is being replaced by the Creators API and requires qualifying sales, so it's a poor first choice.
 
+## Real outfit photos (inspiration)
+
+Set one free key: `UNSPLASH_ACCESS_KEY` (unsplash.com/developers, recommended, demo limit 50 requests/hour, results cached 24h), `PIXABAY_API_KEY` (pixabay.com/api/docs) or `PEXELS_API_KEY` (new Pexels keys were paused in Nov 2026). Each outfit card then shows real photos matching its pieces, credited to the photographer with a link to the source. They are inspiration, not the exact products. Without a key the card shows product photos or plain colour tiles. Prices on sample products are shown as estimates ("≈"). Pinterest has no open image API and its terms don't allow copying pins, so fitsy doesn't pull Pinterest images.
+
+## AI outfit preview (free, labelled)
+
+Each card has an "AI preview" button that generates a picture of a person wearing that outfit's pieces. It is AI-generated, not a real photo, so patterns, logos and small details can differ from the real products, and the card says so. The prompt describes an invented person from the shopper's height and weight (build), face shape and skin tone, plus the outfit's pieces and men/women/unisex. It never includes the shopper's photo or any face data. Those few text details are sent to the image service (Cloudflare Workers AI, or Pollinations as the fallback). The generated face is made up and is not the shopper's. The shopper can choose a pose (standing, walking, hands in pockets, sitting, candid) and a background (auto-picked from the occasion, or a plain studio, street, cafe, nightclub, wedding hall and so on). The pose and background come from fixed lists on the server, never free text. It runs only when pressed to save the free quota; every new pose or background is a new picture and uses some of it. For better reliability add a free Cloudflare account and set `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` (a Workers AI API token); the free allowance is roughly 10,000 "neurons" a day, about 20 to 50 pictures. Without them the app uses the anonymous Pollinations endpoint, which is slower, limited to about one request every 15 seconds and may add a watermark.
+
+## Curated looks (exact outfits, free)
+
+`data/lookbook.json` holds hand-made looks. Each look lists the exact pieces (slot, name, colour, estimated price), so the item list is the look. They are shown first on the results page when the occasion, men/women choice and budget fit, labelled "curated". To make the photo match exactly, add a real photo that shows that outfit:
+
+- `"unsplashId": "abc123XYZ"`: the last part of an Unsplash photo URL (unsplash.com/photos/...-abc123XYZ). Needs `UNSPLASH_ACCESS_KEY`. The photographer is credited automatically.
+- or `"photoUrl"` with your own photo URL (https) plus `"credit"` and `"creditUrl"`. Only use photos you own or may use.
+
+Each item can also have `"url"`: a real https product link (for Myntra/Ajio paste the affiliate deep link from your network). Items with a url show a direct "View on Myntra/Ajio" button; items without show the search buttons.
+
+Without a photo the card searches for a similar one using `photoQuery`. Prices are your estimates and are shown with "≈". Items without a direct product link show "Search: Flipkart / Myntra / Ajio / Amazon" buttons that open that shop's search results for the piece (search pages, not product pages).
+
 ## Add Myntra, Ajio and Amazon
 
 None of the three has a free public product API, so each needs an approved affiliate account. `npm run import:feed` takes a product feed and merges it into `data/products.json` (other merchants are kept; only that merchant's rows are replaced).
@@ -109,6 +128,8 @@ None of the three has a free public product API, so each needs an approved affil
 2. Once approved, open the program's **product feed / data feed** (YML, XML or CSV) and copy its URL. Not every program offers one; ask the network's support.
 3. Run `npm run import:feed -- --merchant Myntra --src "<feed url>"` (and the same for Ajio). If your CSV uses different column names, add `--map name=title,price=sale_price,url=link,image=img`.
 4. Commit `data/products.json` and push.
+
+**Shopify-based brand stores** (many Indian D2C brands): `npm run import:shopify -- --merchant "Brand" --store https://brand.com` reads the store's public `/products.json` (name, price, photo, stock, product link). Ask the brand first or join their affiliate program, and add its tracking query with `--aff "ref=yourid"` so links carry it. Not every store exposes this file.
 
 **Amazon**: the old PA-API was retired on May 15, 2026 in favour of the Creators API, which requires an approved Associates account with qualifying sales. When you have access, export products to a CSV/JSON in the same shape and use the same `import:feed` command with `--merchant Amazon`. A live Amazon adapter is not included.
 

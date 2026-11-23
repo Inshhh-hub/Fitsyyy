@@ -12,7 +12,7 @@ export function mapColour(raw) {
 }
 
 const SLOT_RULES = [
-  ["wallet", /\bwallets?\b/], ["watch", /\bwatch(es)?\b/], ["eyewear", /sunglass|goggle|\beyewear\b/], ["belt", /\bbelts?\b/],
+  ["wallet", /\bwallets?\b/], ["earrings", /earrings?|jhumka|studs?\b/], ["tie", /\bneck ?ties?\b|\bbow ?ties?\b|\btie\b/], ["scarf", /scarf|scarves|stole|muffler|dupatta/], ["socks", /\bsocks?\b/], ["ring", /\brings?\b/], ["watch", /\bwatch(es)?\b/], ["eyewear", /sunglass|goggle|\beyewear\b/], ["belt", /\bbelts?\b/],
   ["bracelet", /bracelet|bangle|kada/], ["chain", /\bchains?\b|necklace|pendant/], ["cap", /\b(cap|caps|hat|beanie)\b/],
   ["bag", /backpack|\bbags?\b|sling|tote|duffle|clutch/],
   ["footwear", /\bshoes?\b|sneaker|loafer|\bboots?\b|sandal|slipper|flip.?flop|\bheels?\b|jutti|mojari|kolhapuri|\bflats?\b|slides?/],

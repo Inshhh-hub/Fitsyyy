@@ -16,9 +16,14 @@ export const SLOT_LABEL: Record<Slot, string> = {
   chain: "Chain / Necklace",
   cap: "Cap",
   wallet: "Wallet",
+  earrings: "Earrings",
+  ring: "Ring",
+  scarf: "Scarf / Stole",
+  tie: "Tie",
+  socks: "Socks",
 };
 
-const SLOT_ORDER: Slot[] = ["upper", "outer", "lower", "footwear", "watch", "belt", "eyewear", "bag", "wallet", "bracelet", "chain", "cap"];
+const SLOT_ORDER: Slot[] = ["upper", "outer", "lower", "footwear", "watch", "belt", "eyewear", "bag", "wallet", "bracelet", "chain", "cap", "earrings", "ring", "scarf", "tie", "socks"];
 
 export function sortItems(items: Product[]): Product[] {
   return [...items].sort((a, b) => SLOT_ORDER.indexOf(a.slot) - SLOT_ORDER.indexOf(b.slot));

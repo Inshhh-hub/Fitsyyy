@@ -35,7 +35,7 @@ export interface StylistResult {
  * Prices and totals always come from the product data, never from the model.
  */
 export async function generateWithAi(ctx: EngineContext, count: number): Promise<StylistResult> {
-  const concepts = conceptsFor(ctx.occasion.conceptSet, count, ctx.round);
+  const concepts = conceptsFor(ctx.occasion.conceptSet, count, ctx.round, ctx.body.category);
   const byId = new Map(ctx.pool.map((p) => [p.id, p]));
   const bp = analyseBody(ctx.body);
   const palette = paletteFor(ctx.appearance);
