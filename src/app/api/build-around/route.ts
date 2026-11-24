@@ -101,6 +101,13 @@ export async function POST(req: Request) {
         }),
     );
 
+    // Gen Z focus: in casual and party looks, skip the older slim / straight / tapered / chino / cargo cuts.
+    const notGenZ = /slim|skinny|straight|tapered|chino|\bcargo\b/i;
+    for (const g of ["casual", "party"] as OccasionGroup[]) {
+      const list = pools[g];
+      if (list) pools[g] = list.filter((p) => !(p.slot === "lower" && notGenZ.test(p.name)));
+    }
+
     const outfits: Outfit[] = buildAround({
       body,
       appearance,

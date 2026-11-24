@@ -27,11 +27,10 @@ const t = (id: string, label: string, name: string, slot: AnchorSlot, groups: Oc
 
 export const ANCHOR_TYPES: AnchorType[] = [
   // Bottomwear
-  t("baggy", "Baggy pants / jeans", "Baggy pants", "lower", ["casual", "party"], ["street", "oversized", "comfy"]),
-  t("straight-jeans", "Straight jeans", "Straight jeans", "lower", ["casual", "party"], ["classic", "minimal", "smartcasual"]),
-  t("slim-jeans", "Slim / skinny jeans", "Slim jeans", "lower", ["casual", "party"], ["classic", "smartcasual", "party"]),
-  t("cargo", "Cargo pants", "Cargo pants", "lower", ["casual", "party"], ["street", "earth", "oversized"]),
-  t("chinos", "Chinos", "Chinos", "lower", ["casual", "formal", "party"], ["smartcasual", "classic", "earth", "semiformal"]),
+  t("baggy", "Baggy / loose pants & jeans", "Baggy pants", "lower", ["casual", "party"], ["street", "oversized", "comfy"]),
+  t("parachute", "Parachute pants", "Parachute pants", "lower", ["casual", "party"], ["street", "oversized", "statement"]),
+  t("flared", "Flared / bootcut jeans", "Flared jeans", "lower", ["casual", "party"], ["street", "party", "statement"]),
+  t("jorts", "Jorts / baggy shorts", "Jorts", "lower", ["casual"], ["street", "oversized", "comfy"]),
   t("trousers", "Formal trousers", "Formal trousers", "lower", ["formal", "casual", "party"], ["formal", "classic", "minimal", "semiformal"]),
   t("pleated", "Pleated trousers", "Pleated trousers", "lower", ["formal", "casual", "party"], ["classic", "minimal", "premium", "date"]),
   t("wide-leg", "Wide-leg trousers", "Wide-leg trousers", "lower", ["casual", "party", "formal"], ["minimal", "date", "street"], "women"),

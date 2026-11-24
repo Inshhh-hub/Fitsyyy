@@ -58,6 +58,7 @@ export default function BuildAroundPage() {
   const [busy, setBusy] = useState(false);
   const [recognising, setRecognising] = useState(false);
   const [seen, setSeen] = useState<string | null>(null);
+  const [catChoice, setCatChoice] = useState<"men" | "women" | null>(null);
   const [showManual, setShowManual] = useState(false);
   const [outfits, setOutfits] = useState<Outfit[] | null>(null);
   const [variant, setVariant] = useState(0);
@@ -75,7 +76,7 @@ export default function BuildAroundPage() {
       </div>
     );
   }
-  const cat = body.category;
+  const cat: "men" | "women" = catChoice ?? (body.category === "women" ? "women" : "men");
   const types = anchorTypesFor(cat);
 
   async function onFile(file: File | undefined) {
@@ -97,14 +98,14 @@ export default function BuildAroundPage() {
   }
 
   /** Ask the free AI what the garment is. On success, build the outfits straight away. On failure, fall back to picking by hand. */
-  async function recogniseAndBuild(dataUrl: string, pixelColour: string) {
+  async function recogniseAndBuild(dataUrl: string, pixelColour: string, category: "men" | "women" = cat) {
     if (!body) return;
     setRecognising(true);
     try {
       const res = await fetch("/api/recognize-clothing", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: dataUrl, category: body.category }),
+        body: JSON.stringify({ image: dataUrl, category }),
       });
       const data = (await res.json()) as { typeId?: string; colour?: string; seen?: string; error?: string };
       if (!res.ok) throw new Error(data.error ?? "Couldn't recognise that photo.");
@@ -117,7 +118,7 @@ export default function BuildAroundPage() {
         return;
       }
       setTypeId(data.typeId);
-      await build(0, { photo: dataUrl, typeId: data.typeId, colour: col });
+      await build(0, { photo: dataUrl, typeId: data.typeId, colour: col, category });
     } catch (e) {
       setShowManual(true);
       toast(e instanceof Error ? e.message : "Couldn't recognise that photo. Pick the type yourself.", "info");
@@ -126,7 +127,7 @@ export default function BuildAroundPage() {
     }
   }
 
-  async function build(nextVariant: number, o?: { photo: string; typeId: string; colour: string }) {
+  async function build(nextVariant: number, o?: { photo: string; typeId: string; colour: string; category?: "men" | "women" }) {
     const ph = o?.photo ?? photo;
     const ty = o?.typeId ?? typeId;
     const co = o?.colour ?? colour;
@@ -136,7 +137,7 @@ export default function BuildAroundPage() {
       const res = await fetch("/api/build-around", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ body, appearance, preferences, anchor: { typeId: ty, colour: co }, variant: nextVariant }),
+        body: JSON.stringify({ body: { ...body, category: o?.category ?? cat }, appearance, preferences, anchor: { typeId: ty, colour: co }, variant: nextVariant }),
       });
       const data = (await res.json()) as { anchor?: Product; outfits?: Outfit[]; error?: string };
       if (!res.ok || !data.outfits) throw new Error(data.error ?? "Couldn't build outfits.");
@@ -148,6 +149,19 @@ export default function BuildAroundPage() {
       toast(e instanceof Error ? e.message : "Something went wrong.", "error");
     } finally {
       setBusy(false);
+    }
+  }
+
+  function pickCategory(next: "men" | "women") {
+    if (next === cat) return;
+    setCatChoice(next);
+    setOutfits(null);
+    const stillOk = typeId ? anchorTypesFor(next).some((t) => t.id === typeId) : false;
+    if (!stillOk) setTypeId(null);
+    // Same photo, other category: rebuild straight away (or re-read the photo if the type doesn't exist for them).
+    if (photo && colour) {
+      if (stillOk && typeId) void build(0, { photo, typeId, colour, category: next });
+      else void recogniseAndBuild(photo, colour, next);
     }
   }
 
@@ -181,6 +195,17 @@ export default function BuildAroundPage() {
         </div>
 
         <div className="space-y-5">
+          <div>
+            <p className="mb-1.5 text-sm font-medium">Styling for</p>
+            <div className="inline-flex rounded-full border border-beige-deep bg-ivory p-1" role="group" aria-label="Styling for">
+              {(["men", "women"] as const).map((g) => (
+                <button key={g} onClick={() => pickCategory(g)} aria-pressed={cat === g} className={cn("rounded-full px-5 py-1.5 text-sm transition", cat === g ? "bg-charcoal text-ivory" : "text-taupe-dark hover:bg-beige")}>
+                  {g === "men" ? "Male" : "Female"}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {(recognising || (photo && seen) || (photo && !typeId)) && (
             <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-lime/30 px-4 py-3 text-sm">
               {recognising ? (
@@ -188,7 +213,7 @@ export default function BuildAroundPage() {
               ) : (
                 <>
                   <span>
-                    {chosen ? <>We think this is <strong>{colour} {chosen.name.toLowerCase()}</strong>.</> : seen ? <>We see &quot;{seen}&quot;.</> : <>We couldn&apos;t tell what this is.</>}
+                    {chosen ? <>{seen && seen.toLowerCase() !== chosen.name.toLowerCase() ? <>We see &quot;{seen}&quot;. </> : null}Styling it as <strong>{colour} {chosen.name.toLowerCase()}</strong>.</> : seen ? <>We see &quot;{seen}&quot;.</> : <>We couldn&apos;t tell what this is.</>}
                   </span>
                   {chosen && <button onClick={() => setShowManual((v) => !v)} className="text-xs underline">{showManual ? "Hide options" : "Not right? Change"}</button>}
                 </>
