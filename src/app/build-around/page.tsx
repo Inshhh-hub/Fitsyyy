@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { Camera, RefreshCw, Shirt, Sparkles, Upload } from "lucide-react";
+import { Camera, Loader2, RefreshCw, Shirt, Sparkles, Upload } from "lucide-react";
 import { OutfitCard } from "@/components/outfit-cards/OutfitCard";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Card, Skeleton } from "@/components/ui/primitives";
@@ -24,7 +24,7 @@ async function readPhoto(file: File): Promise<{ dataUrl: string; colour: string 
       el.onerror = () => reject(new Error("Couldn't read that photo. Try a JPG or PNG."));
       el.src = url;
     });
-    const scale = Math.min(1, 720 / Math.max(img.naturalWidth, img.naturalHeight));
+    const scale = Math.min(1, 640 / Math.max(img.naturalWidth, img.naturalHeight));
     const w = Math.max(1, Math.round(img.naturalWidth * scale));
     const h = Math.max(1, Math.round(img.naturalHeight * scale));
     const canvas = document.createElement("canvas");
@@ -39,7 +39,7 @@ async function readPhoto(file: File): Promise<{ dataUrl: string; colour: string 
     const r: number[] = [], g: number[] = [], b: number[] = [];
     for (let i = 0; i < data.length; i += 16) { r.push(data[i]); g.push(data[i + 1]); b.push(data[i + 2]); }
     const med = (a: number[]) => a.sort((x, y) => x - y)[Math.floor(a.length / 2)] ?? 128;
-    return { dataUrl: canvas.toDataURL("image/jpeg", 0.85), colour: nearestColour([med(r), med(g), med(b)]) };
+    return { dataUrl: canvas.toDataURL("image/jpeg", 0.8), colour: nearestColour([med(r), med(g), med(b)]) };
   } finally {
     URL.revokeObjectURL(url);
   }
@@ -56,6 +56,9 @@ export default function BuildAroundPage() {
   const [colour, setColour] = useState<string | null>(null);
   const [detected, setDetected] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [recognising, setRecognising] = useState(false);
+  const [seen, setSeen] = useState<string | null>(null);
+  const [showManual, setShowManual] = useState(false);
   const [outfits, setOutfits] = useState<Outfit[] | null>(null);
   const [variant, setVariant] = useState(0);
   const savedIds = useMemo(() => new Set(saved.map((o) => o.id)), [saved]);
@@ -83,25 +86,62 @@ export default function BuildAroundPage() {
       setPhoto(r.dataUrl);
       setDetected(r.colour);
       setColour(r.colour);
+      setTypeId(null);
+      setSeen(null);
       setOutfits(null);
+      setShowManual(false);
+      await recogniseAndBuild(r.dataUrl, r.colour);
     } catch (e) {
       toast(e instanceof Error ? e.message : "Couldn't read that photo.", "error");
     }
   }
 
-  async function build(nextVariant: number) {
-    if (!photo || !typeId || !colour || !body || !appearance) return;
+  /** Ask the free AI what the garment is. On success, build the outfits straight away. On failure, fall back to picking by hand. */
+  async function recogniseAndBuild(dataUrl: string, pixelColour: string) {
+    if (!body) return;
+    setRecognising(true);
+    try {
+      const res = await fetch("/api/recognize-clothing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: dataUrl, category: body.category }),
+      });
+      const data = (await res.json()) as { typeId?: string; colour?: string; seen?: string; error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Couldn't recognise that photo.");
+      const col = data.colour ?? pixelColour;
+      setColour(col);
+      setSeen(data.seen ?? null);
+      if (!data.typeId) {
+        setShowManual(true);
+        toast(`We see "${data.seen ?? "a clothing item"}" but aren't sure what type it is. Please pick it below.`, "info");
+        return;
+      }
+      setTypeId(data.typeId);
+      await build(0, { photo: dataUrl, typeId: data.typeId, colour: col });
+    } catch (e) {
+      setShowManual(true);
+      toast(e instanceof Error ? e.message : "Couldn't recognise that photo. Pick the type yourself.", "info");
+    } finally {
+      setRecognising(false);
+    }
+  }
+
+  async function build(nextVariant: number, o?: { photo: string; typeId: string; colour: string }) {
+    const ph = o?.photo ?? photo;
+    const ty = o?.typeId ?? typeId;
+    const co = o?.colour ?? colour;
+    if (!ph || !ty || !co || !body || !appearance) return;
     setBusy(true);
     try {
       const res = await fetch("/api/build-around", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ body, appearance, preferences, anchor: { typeId, colour }, variant: nextVariant }),
+        body: JSON.stringify({ body, appearance, preferences, anchor: { typeId: ty, colour: co }, variant: nextVariant }),
       });
       const data = (await res.json()) as { anchor?: Product; outfits?: Outfit[]; error?: string };
       if (!res.ok || !data.outfits) throw new Error(data.error ?? "Couldn't build outfits.");
-      // The photo is added here, in the browser. It was never sent to the server.
-      setOutfits(data.outfits.map((o) => ({ ...o, items: o.items.map((i) => (i.owned ? { ...i, imageUrl: photo } : i)) })));
+      // The photo is added here, in the browser, so it is never stored with the outfits.
+      setOutfits(data.outfits.map((x) => ({ ...x, items: x.items.map((i) => (i.owned ? { ...i, imageUrl: ph } : i)) })));
       setVariant(nextVariant);
       toast(`${data.outfits.length} outfits built around your piece.`);
     } catch (e) {
@@ -137,12 +177,28 @@ export default function BuildAroundPage() {
           </button>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { void onFile(e.target.files?.[0]); e.target.value = ""; }} />
           {photo && <button onClick={() => fileRef.current?.click()} className="mt-2 inline-flex items-center gap-1 text-xs text-taupe underline"><Camera size={12} /> Use a different photo</button>}
-          <p className="mt-2 text-[11px] text-taupe">Your photo stays on your device. Only the clothing type and colour are sent to build the outfits.</p>
+          <p className="mt-2 text-[11px] text-taupe">Show just the clothing. The photo is sent once to a free AI (Cloudflare) to work out what it is, and is not saved. Only the type and colour are used to build your outfits.</p>
         </div>
 
         <div className="space-y-5">
+          {(recognising || (photo && seen) || (photo && !typeId)) && (
+            <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-lime/30 px-4 py-3 text-sm">
+              {recognising ? (
+                <><Loader2 size={16} className="animate-spin" /> Looking at your photo…</>
+              ) : (
+                <>
+                  <span>
+                    {chosen ? <>We think this is <strong>{colour} {chosen.name.toLowerCase()}</strong>.</> : seen ? <>We see &quot;{seen}&quot;.</> : <>We couldn&apos;t tell what this is.</>}
+                  </span>
+                  {chosen && <button onClick={() => setShowManual((v) => !v)} className="text-xs underline">{showManual ? "Hide options" : "Not right? Change"}</button>}
+                </>
+              )}
+            </div>
+          )}
+
+          {(!photo || showManual || (!recognising && !typeId)) && (
           <div>
-            <p className="mb-2 text-sm font-medium">1. What is it?</p>
+            <p className="mb-2 text-sm font-medium">{photo ? "Pick what it is" : "Or pick it yourself"}</p>
             <div className="space-y-3">
               {SLOT_ORDER.map((slot) => {
                 const list = types.filter((t) => t.slot === slot);
@@ -162,10 +218,11 @@ export default function BuildAroundPage() {
               })}
             </div>
           </div>
+          )}
 
           <div>
-            <p className="mb-1 text-sm font-medium">2. Is this its colour?</p>
-            <p className="mb-2 text-[11px] text-taupe">{detected ? `We read it as ${detected}. Tap another if that's off.` : "Add a photo and we'll read the colour. You can change it."}</p>
+            <p className="mb-1 text-sm font-medium">{photo ? "Colour" : "Colour (we read it from the photo)"}</p>
+            <p className="mb-2 text-[11px] text-taupe">{detected ? "Wrong colour? Tap the right one and rebuild." : "Add a photo and we'll read the colour. You can change it."}</p>
             <div className="flex flex-wrap gap-1.5">
               {ANCHOR_COLOURS.map((c) => (
                 <button key={c} onClick={() => { setColour(c); setOutfits(null); }} aria-pressed={colour === c} aria-label={c} title={c} className={cn("h-8 w-8 rounded-full border-2 transition", colour === c ? "border-charcoal ring-2 ring-lime" : "border-charcoal/15")} style={{ background: hexFor(c) }} />
@@ -175,11 +232,11 @@ export default function BuildAroundPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <Button onClick={() => void build(0)} loading={busy} disabled={!photo || !typeId || !colour}>
-              <Shirt size={16} /> Build 6 outfits
+            <Button onClick={() => void build(0)} loading={busy} disabled={!photo || !typeId || !colour || recognising}>
+              <Shirt size={16} /> {outfits ? "Rebuild with these choices" : "Build 6 outfits"}
             </Button>
             {!photo && <span className="text-xs text-taupe">Add a photo to start.</span>}
-            {photo && !typeId && <span className="text-xs text-taupe">Pick what it is.</span>}
+            {photo && !typeId && !recognising && <span className="text-xs text-taupe">Pick what it is.</span>}
           </div>
           <p className="text-[11px] text-taupe">Budget {formatINR(body.budget)} applies to the pieces you&apos;d add. Your own piece costs nothing.</p>
         </div>
@@ -191,7 +248,7 @@ export default function BuildAroundPage() {
         <>
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-3xl">{outfits.length} outfits around your {chosen ? chosen.label.split(" / ")[0].toLowerCase() : "piece"}</h2>
+              <h2 className="text-3xl">{outfits.length} outfits around your {chosen ? chosen.name.toLowerCase() : "piece"}</h2>
               <p className="text-sm text-taupe-dark">Each card says which occasions it suits. Tap &quot;AI preview&quot; for a picture of a person wearing it.</p>
             </div>
             <Button variant="secondary" size="sm" onClick={() => void build(variant + 1)} loading={busy}><RefreshCw size={14} /> Build another set</Button>

@@ -12,6 +12,8 @@ export type AnchorSlot = "upper" | "lower" | "footwear" | "outer";
 export interface AnchorType {
   id: string;
   label: string;
+  /** short noun phrase used inside outfit text, e.g. "Baggy pants" */
+  name: string;
   slot: AnchorSlot;
   /** only offered to this shopper category (undefined = everyone) */
   only?: "men" | "women";
@@ -21,49 +23,62 @@ export interface AnchorType {
   tags: string[];
 }
 
-const t = (id: string, label: string, slot: AnchorSlot, groups: OccasionGroup[], tags: string[], only?: "men" | "women"): AnchorType => ({ id, label, slot, groups, tags, only });
+const t = (id: string, label: string, name: string, slot: AnchorSlot, groups: OccasionGroup[], tags: string[], only?: "men" | "women"): AnchorType => ({ id, label, name, slot, groups, tags, only });
 
 export const ANCHOR_TYPES: AnchorType[] = [
   // Bottomwear
-  t("baggy", "Baggy pants / jeans", "lower", ["casual", "party"], ["street", "oversized", "comfy"]),
-  t("straight-jeans", "Straight jeans", "lower", ["casual", "party"], ["classic", "minimal", "smartcasual"]),
-  t("slim-jeans", "Slim / skinny jeans", "lower", ["casual", "party"], ["classic", "smartcasual", "party"]),
-  t("cargo", "Cargo pants", "lower", ["casual", "party"], ["street", "earth", "oversized"]),
-  t("chinos", "Chinos", "lower", ["casual", "formal", "party"], ["smartcasual", "classic", "earth", "semiformal"]),
-  t("trousers", "Formal trousers", "lower", ["formal", "casual", "party"], ["formal", "classic", "minimal", "semiformal"]),
-  t("pleated", "Pleated trousers", "lower", ["formal", "casual", "party"], ["classic", "minimal", "premium", "date"]),
-  t("wide-leg", "Wide-leg trousers", "lower", ["casual", "party", "formal"], ["minimal", "date", "street"], "women"),
-  t("joggers", "Joggers / track pants", "lower", ["casual", "sport"], ["comfy", "sporty", "oversized"]),
-  t("shorts", "Shorts", "lower", ["casual", "sport"], ["comfy", "sporty", "street"]),
-  t("skirt", "Skirt", "lower", ["casual", "party"], ["date", "party", "street"], "women"),
-  t("ethnic-bottom", "Pyjama / palazzo / salwar", "lower", ["ethnic"], ["traditional", "festive", "wedding"]),
+  t("baggy", "Baggy pants / jeans", "Baggy pants", "lower", ["casual", "party"], ["street", "oversized", "comfy"]),
+  t("straight-jeans", "Straight jeans", "Straight jeans", "lower", ["casual", "party"], ["classic", "minimal", "smartcasual"]),
+  t("slim-jeans", "Slim / skinny jeans", "Slim jeans", "lower", ["casual", "party"], ["classic", "smartcasual", "party"]),
+  t("cargo", "Cargo pants", "Cargo pants", "lower", ["casual", "party"], ["street", "earth", "oversized"]),
+  t("chinos", "Chinos", "Chinos", "lower", ["casual", "formal", "party"], ["smartcasual", "classic", "earth", "semiformal"]),
+  t("trousers", "Formal trousers", "Formal trousers", "lower", ["formal", "casual", "party"], ["formal", "classic", "minimal", "semiformal"]),
+  t("pleated", "Pleated trousers", "Pleated trousers", "lower", ["formal", "casual", "party"], ["classic", "minimal", "premium", "date"]),
+  t("wide-leg", "Wide-leg trousers", "Wide-leg trousers", "lower", ["casual", "party", "formal"], ["minimal", "date", "street"], "women"),
+  t("joggers", "Joggers / track pants", "Joggers", "lower", ["casual", "sport"], ["comfy", "sporty", "oversized"]),
+  t("shorts", "Shorts", "Shorts", "lower", ["casual", "sport"], ["comfy", "sporty", "street"]),
+  t("leggings", "Leggings / jeggings", "Leggings", "lower", ["casual", "sport"], ["comfy", "sporty", "minimal"], "women"),
+  t("skirt", "Skirt", "Skirt", "lower", ["casual", "party"], ["date", "party", "street"], "women"),
+  t("ethnic-bottom", "Pyjama / palazzo / salwar", "Palazzo pants", "lower", ["ethnic"], ["traditional", "festive", "wedding"]),
   // Upperwear
-  t("tee", "T-shirt", "upper", ["casual", "party", "sport"], ["minimal", "comfy", "street", "smartcasual"]),
-  t("oversized-tee", "Oversized / graphic tee", "upper", ["casual", "party"], ["street", "oversized", "statement"]),
-  t("polo", "Polo", "upper", ["casual", "formal", "party"], ["smartcasual", "classic", "minimal", "semiformal"]),
-  t("shirt", "Casual shirt", "upper", ["casual", "party", "formal"], ["classic", "smartcasual", "date"]),
-  t("formal-shirt", "Formal shirt", "upper", ["formal", "casual", "party"], ["formal", "classic", "semiformal"]),
-  t("hoodie", "Hoodie / sweatshirt", "upper", ["casual", "sport"], ["comfy", "oversized", "street"]),
-  t("sweater", "Sweater / knit", "upper", ["casual", "party", "formal"], ["minimal", "earth", "classic", "date"]),
-  t("top", "Top / blouse", "upper", ["casual", "party", "formal"], ["date", "party", "minimal", "street"], "women"),
-  t("kurta", "Kurta / kurti", "upper", ["ethnic", "casual"], ["traditional", "festive", "wedding"]),
-  t("gym-tee", "Gym tee / tank", "upper", ["sport", "casual"], ["sporty", "comfy"]),
+  t("tee", "T-shirt", "T-shirt", "upper", ["casual", "party", "sport"], ["minimal", "comfy", "street", "smartcasual"]),
+  t("oversized-tee", "Oversized / graphic tee", "Oversized tee", "upper", ["casual", "party"], ["street", "oversized", "statement"]),
+  t("henley", "Henley / full-sleeve tee", "Henley", "upper", ["casual", "party"], ["minimal", "classic", "smartcasual"]),
+  t("polo", "Polo", "Polo", "upper", ["casual", "formal", "party"], ["smartcasual", "classic", "minimal", "semiformal"]),
+  t("shirt", "Casual shirt", "Casual shirt", "upper", ["casual", "party", "formal"], ["classic", "smartcasual", "date"]),
+  t("resort-shirt", "Resort / printed shirt", "Resort shirt", "upper", ["casual", "party"], ["date", "statement", "smartcasual"]),
+  t("linen-shirt", "Linen shirt", "Linen shirt", "upper", ["casual", "party", "formal"], ["minimal", "date", "earth", "smartcasual"]),
+  t("flannel", "Flannel / checked shirt", "Flannel shirt", "upper", ["casual", "party"], ["earth", "street", "smartcasual"]),
+  t("formal-shirt", "Formal shirt", "Formal shirt", "upper", ["formal", "casual", "party"], ["formal", "classic", "semiformal"]),
+  t("hoodie", "Hoodie / sweatshirt", "Hoodie", "upper", ["casual", "sport"], ["comfy", "oversized", "street"]),
+  t("sweater", "Sweater / knit", "Sweater", "upper", ["casual", "party", "formal"], ["minimal", "earth", "classic", "date"]),
+  t("top", "Top / blouse", "Top", "upper", ["casual", "party", "formal"], ["date", "party", "minimal", "street"], "women"),
+  t("crop-top", "Crop top", "Crop top", "upper", ["casual", "party"], ["party", "street", "date"], "women"),
+  t("kurta", "Kurta / kurti", "Kurta", "upper", ["ethnic", "casual"], ["traditional", "festive", "wedding"]),
+  t("gym-tee", "Gym tee / tank", "Gym tee", "upper", ["sport", "casual"], ["sporty", "comfy"]),
   // Footwear
-  t("white-sneakers", "White sneakers", "footwear", ["casual", "party", "formal"], ["minimal", "smartcasual", "street"]),
-  t("chunky-sneakers", "Chunky sneakers", "footwear", ["casual", "party"], ["street", "statement", "oversized"]),
-  t("formal-shoes", "Formal shoes", "footwear", ["formal", "party"], ["formal", "classic", "premium"]),
-  t("loafers", "Loafers", "footwear", ["formal", "casual", "party"], ["classic", "smartcasual", "premium"]),
-  t("boots", "Boots", "footwear", ["casual", "party"], ["street", "earth", "date"]),
-  t("slides", "Sandals / slides", "footwear", ["casual"], ["comfy", "value"]),
-  t("training-shoes", "Running / training shoes", "footwear", ["sport", "casual"], ["sporty", "comfy"]),
-  t("heels", "Heels", "footwear", ["party", "formal"], ["party", "date", "statement"], "women"),
-  t("juttis", "Juttis / mojaris", "footwear", ["ethnic"], ["traditional", "festive", "wedding"]),
+  t("white-sneakers", "Sneakers (white / minimal)", "White sneakers", "footwear", ["casual", "party", "formal"], ["minimal", "smartcasual", "street"]),
+  t("chunky-sneakers", "Chunky sneakers", "Chunky sneakers", "footwear", ["casual", "party"], ["street", "statement", "oversized"]),
+  t("canvas", "Canvas / slip-on shoes", "Canvas shoes", "footwear", ["casual"], ["minimal", "comfy", "value"]),
+  t("formal-shoes", "Formal shoes (oxford / derby)", "Formal shoes", "footwear", ["formal", "party"], ["formal", "classic", "premium"]),
+  t("loafers", "Loafers", "Loafers", "footwear", ["formal", "casual", "party"], ["classic", "smartcasual", "premium"]),
+  t("boots", "Boots", "Boots", "footwear", ["casual", "party"], ["street", "earth", "date"]),
+  t("slides", "Sandals / slides", "Sandals", "footwear", ["casual"], ["comfy", "value"]),
+  t("training-shoes", "Running / training shoes", "Running shoes", "footwear", ["sport", "casual"], ["sporty", "comfy"]),
+  t("heels", "Heels", "Heels", "footwear", ["party", "formal"], ["party", "date", "statement"], "women"),
+  t("flats", "Flats / ballerinas", "Flats", "footwear", ["casual", "formal"], ["minimal", "classic", "date"], "women"),
+  t("juttis", "Juttis / mojaris", "Juttis", "footwear", ["ethnic"], ["traditional", "festive", "wedding"]),
   // Layers
-  t("denim-jacket", "Denim jacket", "outer", ["casual", "party"], ["street", "smartcasual"]),
-  t("jacket", "Jacket / bomber", "outer", ["casual", "party"], ["street", "statement", "earth"]),
-  t("blazer", "Blazer", "outer", ["formal", "party", "casual"], ["formal", "classic", "premium", "semiformal"]),
-  t("overshirt", "Overshirt / shacket", "outer", ["casual", "party"], ["earth", "smartcasual", "minimal"]),
-  t("ethnic-jacket", "Nehru / ethnic jacket", "outer", ["ethnic"], ["traditional", "festive", "indowestern"]),
+  t("denim-jacket", "Denim jacket", "Denim jacket", "outer", ["casual", "party"], ["street", "smartcasual"]),
+  t("jacket", "Jacket / bomber", "Jacket", "outer", ["casual", "party"], ["street", "statement", "earth"]),
+  t("leather-jacket", "Leather / biker jacket", "Leather jacket", "outer", ["casual", "party"], ["street", "statement", "party"]),
+  t("puffer", "Puffer jacket", "Puffer jacket", "outer", ["casual", "party"], ["street", "comfy"]),
+  t("track-jacket", "Track jacket / windcheater", "Track jacket", "outer", ["casual", "sport"], ["sporty", "street", "comfy"]),
+  t("blazer", "Blazer", "Blazer", "outer", ["formal", "party", "casual"], ["formal", "classic", "premium", "semiformal"]),
+  t("coat", "Trench / long coat", "Long coat", "outer", ["formal", "casual"], ["classic", "premium", "minimal"]),
+  t("cardigan", "Cardigan / shrug", "Cardigan", "outer", ["casual", "party"], ["minimal", "earth", "date"]),
+  t("overshirt", "Overshirt / shacket", "Overshirt", "outer", ["casual", "party"], ["earth", "smartcasual", "minimal"]),
+  t("ethnic-jacket", "Nehru / ethnic jacket / waistcoat", "Nehru jacket", "outer", ["ethnic"], ["traditional", "festive", "indowestern"]),
 ];
 
 export const ANCHOR_SLOT_LABEL: Record<AnchorSlot, string> = { upper: "Upperwear", lower: "Bottomwear", footwear: "Footwear", outer: "Layer" };

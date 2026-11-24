@@ -74,11 +74,11 @@ export async function POST(req: Request) {
   const colour = parsed.data.anchor.colour;
   const anchor: Product = {
     id: `own-${type.id}-${colour}`,
-    name: type.label.split(" / ")[0],
+    name: type.name,
     brand: "Yours",
     merchant: "From your wardrobe",
     slot: type.slot,
-    subtype: type.label.split(" / ")[0],
+    subtype: type.name,
     price: 0,
     colour,
     hex: hexFor(colour),
