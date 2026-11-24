@@ -22,7 +22,7 @@ interface Props {
   comparing: boolean;
   wishIds: Set<string>;
   onSave: () => void;
-  onCompare: () => void;
+  onCompare?: () => void;
   onWish: (p: Product) => void;
   onChange: (o: Outfit) => void;
   notify: (msg: string, kind?: "success" | "error" | "info") => void;
@@ -47,6 +47,7 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
   const who = gender === "women" ? "women" : gender === "men" ? "men" : "";
   const inspoQuery = (outfit.photoQuery ? (outfit.curated ? outfit.photoQuery : `${who} ${outfit.photoQuery}`) : `${who} wearing ${core.join(" ")} outfit`).replace(/\s+/g, " ").trim().slice(0, 80);
   const approx = sample ? "≈ " : "";
+  const ownedPhoto = outfit.items.find((i) => i.owned && i.imageUrl);
 
   return (
     <motion.article layout className="flex flex-col overflow-hidden rounded-3xl border border-beige-deep/70 bg-white/70 shadow-soft transition-shadow hover:shadow-lift">
@@ -64,6 +65,13 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
           <Badge tone="dark">{outfit.curated ? `${outfit.style} · curated` : outfit.style}</Badge>
           {outfit.withinBudget ? <Badge tone="sage"><Check size={11} /> Within budget</Badge> : <Badge tone="warn">Over budget</Badge>}
         </div>
+        {ownedPhoto?.imageUrl && (
+          <div className="absolute bottom-3 right-3 z-10 text-center" title="The piece this outfit is built around">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ownedPhoto.imageUrl} alt={`Your ${ownedPhoto.name}`} className="h-16 w-16 rounded-xl border-2 border-ivory bg-white object-cover shadow-soft" />
+            <span className="mt-0.5 block rounded-full bg-charcoal px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide text-ivory">Yours</span>
+          </div>
+        )}
         <div className="absolute right-3 top-3 flex h-12 w-12 flex-col items-center justify-center rounded-full bg-ivory text-charcoal shadow-soft" title="Suitability score">
           <span className="font-serif text-lg leading-none">{outfit.suitabilityScore}</span>
           <span className="text-[8px] uppercase tracking-wide text-taupe">match</span>
@@ -79,10 +87,11 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
           <p className="text-[11px] uppercase tracking-wide text-taupe">{outfit.occasionLabel}</p>
           <h3 className="text-2xl leading-tight">{outfit.name}</h3>
           <p className="mt-1.5 text-sm text-taupe-dark">{outfit.reason}</p>
+          {outfit.bestFor && <p className="mt-2 rounded-2xl bg-lime/40 px-3 py-2 text-xs font-medium text-charcoal">{outfit.bestFor}</p>}
         </div>
         <ul className="space-y-1 text-xs text-taupe-dark">
           {outfit.items.slice(0, 4).map((i) => (
-            <li key={i.id} className="flex justify-between gap-2"><span className="truncate">{i.name}</span><span>{approx}{formatINR(i.price)}</span></li>
+            <li key={i.id} className="flex justify-between gap-2"><span className="truncate">{i.name}</span><span>{i.owned ? "Yours" : `${approx}${formatINR(i.price)}`}</span></li>
           ))}
           {outfit.items.length > 4 && <li className="text-taupe">+ {outfit.items.length - 4} more</li>}
         </ul>
@@ -95,12 +104,14 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
             View Complete Outfit <ChevronDown size={14} className={cn("transition", open && "rotate-180")} />
           </Button>
           <Button size="sm" onClick={() => setShop(true)}><ShoppingBag size={14} /> Shop This Outfit</Button>
-          <Button variant={saved ? "sage" : "ghost"} size="sm" onClick={onSave} aria-pressed={saved}>
+          <Button variant={saved ? "sage" : "ghost"} size="sm" onClick={onSave} aria-pressed={saved} className={cn(!onCompare && "col-span-2")}>
             <Heart size={14} className={saved ? "fill-current" : ""} /> {saved ? "Saved" : "Save Favourite"}
           </Button>
-          <Button variant={comparing ? "primary" : "ghost"} size="sm" onClick={onCompare} aria-pressed={comparing}>
-            <GitCompareArrows size={14} /> {comparing ? "In comparison" : "Compare"}
-          </Button>
+          {onCompare && (
+            <Button variant={comparing ? "primary" : "ghost"} size="sm" onClick={onCompare} aria-pressed={comparing}>
+              <GitCompareArrows size={14} /> {comparing ? "In comparison" : "Compare"}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -112,7 +123,7 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
                 <h4 className="mb-2 text-lg">Every piece</h4>
                 <ul className="space-y-2">
                   {outfit.items.map((i) => (
-                    <ProductRow key={i.id} item={i} wished={wishIds.has(i.id)} onWish={() => onWish(i)} onReplace={() => setReplacing(i)} />
+                    <ProductRow key={i.id} item={i} wished={wishIds.has(i.id)} onWish={() => onWish(i)} onReplace={i.owned ? undefined : () => setReplacing(i)} />
                   ))}
                 </ul>
               </section>
@@ -155,9 +166,9 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
             <li key={i.id} className="rounded-2xl border border-beige-deep bg-white/70 p-3">
               <div className="flex items-center gap-3">
                 <ProductThumb p={i} className="h-12 w-12 shrink-0" />
-                <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{i.name}</p><p className="text-xs text-taupe">{approx}{formatINR(i.price)}</p></div>
+                <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{i.name}</p><p className="text-xs text-taupe">{i.owned ? "Yours" : `${approx}${formatINR(i.price)}`}</p></div>
               </div>
-              <div className="mt-2"><ShopLink p={i} /></div>
+              <div className="mt-2">{i.owned ? <span className="text-[11px] text-taupe">You already own this piece.</span> : <ShopLink p={i} />}</div>
             </li>
           ))}
         </ul>

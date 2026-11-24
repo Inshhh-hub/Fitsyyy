@@ -64,13 +64,14 @@ export function ProductRow({ item, wished, onWish, onReplace }: Props) {
             <p className="truncate text-sm font-medium">{item.name}</p>
             <p className="truncate text-xs text-taupe-dark">{item.isSample ? item.brand : `${item.brand} · ${item.merchant}`}</p>
           </div>
-          <p className="shrink-0 font-serif text-lg">{formatINR(item.price)}</p>
+          <p className="shrink-0 font-serif text-lg">{item.owned ? "Yours" : formatINR(item.price)}</p>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-2">
+          {item.owned && <Badge tone="sage">From your wardrobe</Badge>}
           {item.inStock === false && <Badge tone="warn">Out of stock</Badge>}
           {item.sizes?.length ? <span className="text-[11px] text-taupe">Sizes {item.sizes.join(", ")}</span> : null}
           <span className="flex-1" />
-          <ShopLink p={item} size="xs" />
+          {!item.owned && <ShopLink p={item} size="xs" />}
           {onReplace && (
             <button onClick={onReplace} className="inline-flex items-center gap-1 rounded-full border border-beige-deep px-2.5 py-1 text-[11px] hover:bg-beige"><Repeat2 size={12} /> Replace</button>
           )}

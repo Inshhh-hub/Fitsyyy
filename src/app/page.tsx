@@ -1,4 +1,4 @@
-import { ArrowRight, Camera, Palette, Ruler, ShieldCheck, Wallet } from "lucide-react";
+import { ArrowRight, Camera, Palette, Ruler, Shirt, ShieldCheck, Wallet } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Card } from "@/components/ui/primitives";
 import { OutfitPreview, type PreviewItem } from "@/components/outfit-cards/OutfitPreview";
@@ -59,6 +59,15 @@ export default function Home() {
             </Card>
           ))}
         </div>
+      </section>
+
+      <section className="grid items-center gap-6 rounded-3xl border border-beige-deep bg-beige/50 p-8 md:grid-cols-[1fr_auto] md:p-12">
+        <div>
+          <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-lime text-charcoal"><Shirt size={20} /></div>
+          <h2 className="text-3xl sm:text-4xl">Already own something you love?</h2>
+          <p className="mt-2 max-w-xl text-taupe-dark">Upload a photo of one piece, like your black baggy pants. fitsy builds at least five outfits around it and tells you which occasion each is best for.</p>
+        </div>
+        <ButtonLink href="/build-around" size="lg">Build around my clothes <ArrowRight size={18} /></ButtonLink>
       </section>
 
       <section className="rounded-3xl bg-charcoal px-6 py-14 text-ivory sm:px-12">

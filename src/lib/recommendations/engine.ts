@@ -4,8 +4,8 @@ import { suggestionsFor } from "./appearance";
 import { analyseBody, bodyReason, type BodyProfile } from "./body";
 import { ESSENTIAL_SLOTS, recalc, sortItems, totalPrice } from "./budget";
 import { BIAS_COLOURS, NEUTRALS, PAIR_SAFE, paletteFor, parseColours, titleCase, type Palette } from "./colour";
-import { conceptsFor, type Concept, type PriceMode } from "./concepts";
-import { getOccasion, inferOccasionFromText, type Occasion, type OccasionGroup } from "./occasions";
+import { CONCEPT_SETS, conceptsFor, type Concept, type PriceMode } from "./concepts";
+import { getOccasion, inferOccasionFromText, OCCASIONS, type Occasion, type OccasionGroup } from "./occasions";
 import { matchesGender } from "@/lib/product-providers/types";
 
 export interface EngineContext {
@@ -145,7 +145,7 @@ function pickBest(list: Product[], concept: Concept, ctx: EngineContext, prep: P
 }
 
 /** Budget-aware assembly of one outfit: essentials first, then layer/accessories with what's left. */
-function assemble(concept: Concept, ctx: EngineContext, prep: Prepared, batchUsed: Set<string>, rnd: () => number, attempt = 0): Product[] | null {
+function assemble(concept: Concept, ctx: EngineContext, prep: Prepared, batchUsed: Set<string>, rnd: () => number, attempt = 0, locked?: Product): Product[] | null {
   const budget = ctx.body.budget;
   const strict = attempt >= 2; // on later attempts, prefer products not yet used by other outfits in this batch
   const fresh = (list: Product[]) => {
@@ -155,6 +155,10 @@ function assemble(concept: Concept, ctx: EngineContext, prep: Prepared, batchUse
   };
   const cands: Partial<Record<Slot, Product[]>> = {};
   for (const slot of ESSENTIAL_SLOTS) {
+    if (locked?.slot === slot) {
+      cands[slot] = [locked];
+      continue;
+    }
     const list = candidates(slot, ctx, prep, false);
     if (!list.length) return null;
     cands[slot] = list;
@@ -162,11 +166,13 @@ function assemble(concept: Concept, ctx: EngineContext, prep: Prepared, batchUse
   const priceFloor = [1.15, 1.15, 1.6, 2.2][Math.min(attempt, 3)];
   const minPrice = (slot: Slot) => Math.min(...cands[slot]!.map((p) => p.price));
   const minTotal = ESSENTIAL_SLOTS.reduce((s, sl) => s + minPrice(sl), 0);
-  const chosen: Product[] = [];
+  // A piece the shopper already owns goes in first so every other pick is matched to it.
+  const chosen: Product[] = locked ? [locked] : [];
 
   if (minTotal > budget) {
     // Cannot afford a complete outfit: show the cheapest complete set, clearly flagged as over budget.
     for (const slot of ESSENTIAL_SLOTS) {
+      if (locked?.slot === slot) continue;
       const floor = minPrice(slot);
       const cheapest = fresh(cands[slot]!.filter((p) => p.price <= floor * priceFloor));
       chosen.push(pickBest(cheapest, concept, ctx, prep, chosen, 0, batchUsed, rnd)!);
@@ -176,6 +182,7 @@ function assemble(concept: Concept, ctx: EngineContext, prep: Prepared, batchUse
 
   const mul = MODE_MUL[concept.mode];
   ESSENTIAL_SLOTS.forEach((slot, i) => {
+    if (locked?.slot === slot) return;
     const laterMin = ESSENTIAL_SLOTS.slice(i + 1).reduce((s, sl) => s + minPrice(sl), 0);
     const spent = totalPrice(chosen);
     const cap = budget - spent - laterMin;
@@ -186,7 +193,7 @@ function assemble(concept: Concept, ctx: EngineContext, prep: Prepared, batchUse
     chosen.push(pickBest(fresh(options), concept, ctx, prep, chosen, target, batchUsed, rnd)!);
   });
 
-  const extras: Slot[] = [...(concept.outer ? (["outer"] as Slot[]) : []), ...ACCESSORY_PRIORITY[ctx.occasion.group]];
+  const extras: Slot[] = [...(concept.outer && locked?.slot !== "outer" ? (["outer"] as Slot[]) : []), ...ACCESSORY_PRIORITY[ctx.occasion.group]];
   let accessories = 0;
   for (const slot of extras) {
     if (chosen.length >= MAX_ITEMS || (slot !== "outer" && accessories >= 6)) break;
@@ -382,3 +389,115 @@ export const SORTERS = {
   colour: (a: Outfit, b: Outfit) => b.scores.colour - a.scores.colour,
 } as const;
 export type SortKey = keyof typeof SORTERS;
+
+export interface AroundInput {
+  body: BodyInfo;
+  appearance: Appearance;
+  preferences: Preferences;
+  /** product pools, one per occasion group */
+  pools: Partial<Record<OccasionGroup, Product[]>>;
+  /** the piece the shopper owns; price 0 */
+  anchor: Product;
+  groups: OccasionGroup[];
+  count: number;
+  seed: number;
+}
+
+/**
+ * "Build around my clothes": styles complete outfits around ONE piece the shopper already owns.
+ * The owned piece is locked into every look (costs nothing), and every other piece is chosen to
+ * go with it, across different occasions. Each outfit says which occasions it is best suited for.
+ */
+export function buildAround(input: AroundInput): Outfit[] {
+  const { anchor } = input;
+  const anchorText = `${anchor.name} ${anchor.subtype} ${anchor.colour}`;
+  const rnd = seededRandom(input.seed);
+  const slotKey = anchor.slot as "upper" | "lower" | "footwear" | "outer";
+
+  interface Cand { set: keyof typeof CONCEPT_SETS; occasions: Occasion[]; concept: Concept; score: number }
+  const cands: Cand[] = [];
+  for (const set of Object.keys(CONCEPT_SETS) as Array<keyof typeof CONCEPT_SETS>) {
+    const occasions = OCCASIONS.filter((o) => o.id !== "others" && o.conceptSet === set && input.groups.includes(o.group));
+    if (!occasions.length) continue;
+    for (const concept of conceptsFor(set, 99, 0, input.body.category)) {
+      let score = 0;
+      const rx = concept.recipe?.[slotKey];
+      if (rx) score += rx.test(anchorText) ? 3 : -1;
+      score += concept.tags.filter((tg) => anchor.tags.includes(tg)).length * 1.2;
+      if (concept.bias !== "any" && BIAS_COLOURS[concept.bias].includes(anchor.colour)) score += 0.8;
+      cands.push({ set, occasions, concept, score: score + rnd() * 0.6 });
+    }
+  }
+  cands.sort((a, b) => b.score - a.score);
+
+  // Variety first: the best look from each occasion set, then the next best overall.
+  const order: Cand[] = [];
+  const seenSets = new Set<string>();
+  for (const c of cands) if (!seenSets.has(c.set)) { seenSets.add(c.set); order.push(c); }
+  for (const c of cands) if (!order.includes(c)) order.push(c);
+
+  const out: Outfit[] = [];
+  const seen = new Set<string>();
+  const used = new Set<string>();
+  const built = new Set<Cand>();
+  const labelFor = (c: Cand) => c.occasions.map((o) => o.label).join(", ");
+  // Pass 1 stays inside the budget. If that gives too few looks (for example, ethnic pieces cost more),
+  // pass 2 allows up to 40% over and the outfits are clearly flagged "over budget" by makeOutfit.
+  for (const stretch of [1, 1.4]) {
+    for (const cand of order) {
+      if (out.length >= input.count) break;
+      if (built.has(cand)) continue;
+      const occasion = cand.occasions[0];
+      const ctx: EngineContext = {
+        body: input.body,
+        appearance: input.appearance,
+        preferences: input.preferences,
+        occasion,
+        round: 0,
+        excludeIds: new Set(),
+        pool: input.pools[occasion.group] ?? [],
+        seed: input.seed,
+      };
+      const prep = prepare(ctx);
+      const buildCtx: EngineContext = stretch === 1 ? ctx : { ...ctx, body: { ...ctx.body, budget: Math.round(ctx.body.budget * stretch) } };
+      let items: Product[] | null = null;
+      let key = "";
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const tryItems = assemble(cand.concept, buildCtx, prep, used, rnd, attempt, anchor);
+        if (!tryItems) break;
+        const k = outfitKey(tryItems.map((i) => i.id));
+        if (!seen.has(k)) { items = tryItems; key = k; break; }
+      }
+      if (!items) continue;
+      // Pass 1 only keeps looks that really fit; anything over waits for pass 2.
+      if (stretch === 1 && totalPrice(items) > input.body.budget) continue;
+      seen.add(key);
+      built.add(cand);
+      items.forEach((i) => used.add(i.id));
+
+      const index = out.length;
+      const total = totalPrice(items);
+      const labels = labelFor(cand);
+      const outfit = makeOutfit({
+        id: `around-${anchor.id}-${index}-${key.length}`,
+        name: cand.concept.name,
+        style: cand.concept.style,
+        concept: cand.concept,
+        items,
+        ctx,
+        index,
+        overrides: {
+          reason: `${cand.concept.style} look built around your ${anchor.colour} ${anchor.name.toLowerCase()}, with every other piece chosen to go with it.`,
+          reasons: {
+            occasion: `Your ${anchor.colour} ${anchor.name.toLowerCase()} is the starting point. ${cand.concept.style} styling suits ${labels.toLowerCase()}: ${cand.occasions[0].blurb.toLowerCase()}. ${seasonNote()}`,
+            budget: total <= input.body.budget
+              ? `Your own ${anchor.name.toLowerCase()} costs nothing, so the new pieces total ${formatINR(total)} of your ${formatINR(input.body.budget)} budget, leaving ${formatINR(input.body.budget - total)}.`
+              : `Even with your own ${anchor.name.toLowerCase()} costing nothing, the new pieces total ${formatINR(total)}, which is ${formatINR(total - input.body.budget)} over your ${formatINR(input.body.budget)} budget. Swap pieces to bring it down.`,
+          },
+        },
+      });
+      out.push({ ...outfit, occasionLabel: labels, bestFor: `Best for ${labels}. ${cand.occasions[0].blurb}.`, anchorId: anchor.id });
+    }
+  }
+  return out;
+}

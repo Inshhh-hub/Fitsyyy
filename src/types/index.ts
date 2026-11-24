@@ -87,6 +87,8 @@ export interface Product {
   sizes?: string[];
   inStock?: boolean;
   isSample: boolean; // true = demo data, not a real listing
+  /** true = a piece the shopper already owns (Build-around). Costs nothing and has no shop links. */
+  owned?: boolean;
   /** text used for "search on Flipkart / Myntra / Ajio / Amazon" links when there is no direct product URL */
   searchQuery?: string;
 }
@@ -127,6 +129,10 @@ export interface Outfit {
   lookPhoto?: { unsplashId?: string; url?: string; credit?: string; creditUrl?: string };
   /** true when this is a hand-curated look from data/lookbook.json */
   curated?: boolean;
+  /** Build-around: the occasions this look is best suited for, in a sentence */
+  bestFor?: string;
+  /** Build-around: id of the piece the look was built around */
+  anchorId?: string;
 }
 
 export interface GenerateResponse {

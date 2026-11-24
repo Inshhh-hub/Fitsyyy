@@ -171,3 +171,13 @@ src/lib/            ai, database, product-providers, recommendations, validation
 src/hooks/          useStyle (state + localStorage + Supabase sync)
 supabase/migrations 0001_init.sql
 ```
+
+## Build around my clothes
+
+Open **My clothes** in the menu (`/build-around`). The shopper uploads a photo of one piece they own, picks what it is (baggy pants, shirt, sneakers…) and confirms its colour (read from the photo in the browser). fitsy builds six outfits around it. Each one says which occasions it is best for.
+
+- The photo stays in the browser. Only the clothing type and colour are sent to `/api/build-around`.
+- The owned piece is locked into every look at ₹0. Every other piece is chosen to go with it, within the budget (or clearly flagged over budget).
+- Looks come from the same concept sets as the main stylist, ranked by how well they suit the piece (`buildAround` in `src/lib/recommendations/engine.ts`).
+- Clothing types and the occasions each suits are listed in `src/lib/recommendations/anchor.ts`. Add a type there to offer it in the picker.
+- The AI preview uses the same invented-face Cloudflare flow as the main outfits. It draws a similar piece (same type and colour), not the exact one in the photo, and the uploaded photo is shown next to it as "Yours".

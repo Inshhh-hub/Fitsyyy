@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/", label: "Home" },
   { href: "/onboarding", label: "Style me" },
   { href: "/recommendations", label: "My outfits" },
+  { href: "/build-around", label: "My clothes" },
   { href: "/profile", label: "Profile" },
 ];
 
