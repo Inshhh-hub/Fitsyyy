@@ -37,7 +37,7 @@ const SCENE_FOR_OCCASION: Record<string, string> = {
 
 const bodySchema = z.object({
   pose: z.enum(["standing", "walking", "pockets", "sitting", "candid"]).default("standing"),
-  scene: z.enum(["auto", "studio", "street", "cafe", "nightclub", "party", "wedding", "office", "gym", "home", "campus", "festive", "evening"]).default("auto"),
+  scene: z.enum(["auto", "studio", "street", "cafe", "nightclub", "party", "wedding", "office", "gym", "home", "campus", "festive", "evening"]).default("studio"),
   occasion: z.string().max(30).optional(),
   gender: z.enum(["men", "women", "unisex"]),
   items: z

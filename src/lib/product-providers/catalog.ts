@@ -227,8 +227,8 @@ export const DEMO_CATALOG: Product[] = ROWS.trim()
     return {
       id: `demo-${String(i + 1).padStart(3, "0")}`,
       name,
-      brand: "Sample",
-      merchant: "Sample data",
+      brand: "Any brand",
+      merchant: "Search to buy",
       slot: slot as Slot,
       subtype,
       price: Number(price),

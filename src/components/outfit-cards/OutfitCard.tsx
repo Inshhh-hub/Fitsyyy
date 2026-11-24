@@ -88,7 +88,7 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
         </ul>
         <BudgetBar total={outfit.total} budget={outfit.budget} compact />
         {outfit.warning && <p className="rounded-xl bg-amber-50 p-2.5 text-xs text-amber-900">{outfit.warning}</p>}
-        {sample && <p className="text-[11px] text-taupe">Sample products — demo data, not live listings.</p>}
+        {sample && <p className="text-[11px] text-taupe">Estimated prices. Tap Shop to find similar pieces.</p>}
 
         <div className="mt-auto grid grid-cols-2 gap-2 pt-1">
           <Button variant="secondary" size="sm" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
@@ -152,15 +152,17 @@ export function OutfitCard({ outfit, gender, saved, comparing, wishIds, onSave, 
       <Modal open={shop} onClose={() => setShop(false)} title="Shop this outfit">
         <ul className="space-y-2">
           {outfit.items.map((i) => (
-            <li key={i.id} className="flex items-center gap-3 rounded-2xl border border-beige-deep bg-white/70 p-3">
-              <ProductThumb p={i} className="h-12 w-12 shrink-0" />
-              <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{i.name}</p><p className="text-xs text-taupe">{i.merchant} · {approx}{formatINR(i.price)}</p></div>
-              <ShopLink p={i} />
+            <li key={i.id} className="rounded-2xl border border-beige-deep bg-white/70 p-3">
+              <div className="flex items-center gap-3">
+                <ProductThumb p={i} className="h-12 w-12 shrink-0" />
+                <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{i.name}</p><p className="text-xs text-taupe">{approx}{formatINR(i.price)}</p></div>
+              </div>
+              <div className="mt-2"><ShopLink p={i} /></div>
             </li>
           ))}
         </ul>
         <p className="mt-4 flex justify-between border-t border-beige-deep pt-3 font-serif text-xl"><span>{sample ? "Estimated total" : "Total"}</span><span>{approx}{formatINR(outfit.total)}</span></p>
-        {sample && <p className="mt-3 rounded-2xl bg-amber-50 p-3 text-xs text-amber-900">These are sample products in demo mode, so there are no real product pages to open. Connect a product feed (see README) to get direct links.</p>}
+        {sample && <p className="mt-3 text-[11px] text-taupe">Prices are market estimates. Tap a store to search for similar pieces.</p>}
       </Modal>
     </motion.article>
   );

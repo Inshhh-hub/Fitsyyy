@@ -8,10 +8,6 @@ import { useStyle } from "@/hooks/useStyle";
 const POSES: Array<[string, string]> = [
   ["standing", "Standing"], ["walking", "Walking"], ["pockets", "Hands in pockets"], ["sitting", "Sitting"], ["candid", "Candid"],
 ];
-const SCENES: Array<[string, string]> = [
-  ["auto", "Auto for occasion"], ["studio", "Plain studio"], ["street", "City street"], ["cafe", "Cafe"], ["nightclub", "Nightclub"], ["party", "Party venue"],
-  ["wedding", "Wedding hall"], ["office", "Office"], ["gym", "Gym"], ["home", "Home"], ["campus", "Campus"], ["festive", "Festive courtyard"], ["evening", "Evening terrace"],
-];
 
 /** Free AI-generated picture of an invented person (matching the shopper's build and skin tone) wearing this outfit. Always labelled as AI. */
 export function AiPreview({ outfit, gender, onImage }: { outfit: Outfit; gender: string; onImage: (src: string | null) => void }) {
@@ -20,7 +16,6 @@ export function AiPreview({ outfit, gender, onImage }: { outfit: Outfit; gender:
   const [err, setErr] = useState("");
   const [shown, setShown] = useState(false);
   const [pose, setPose] = useState("standing");
-  const [scene, setScene] = useState("auto");
 
   async function run() {
     setBusy(true);
@@ -32,7 +27,7 @@ export function AiPreview({ outfit, gender, onImage }: { outfit: Outfit; gender:
         body: JSON.stringify({
           gender: gender === "women" ? "women" : gender === "men" ? "men" : "unisex",
           pose,
-          scene,
+          scene: "studio",
           occasion: outfit.occasionId,
           items: outfit.items.slice(0, 8).map((i) => ({ slot: i.slot, colour: i.colour, name: i.name })),
           model: body ? { heightCm: body.heightCm, weightKg: body.weightKg, faceShape: appearance?.faceShape, skinTone: appearance?.skinTone, undertone: appearance?.undertone } : undefined,
@@ -55,9 +50,6 @@ export function AiPreview({ outfit, gender, onImage }: { outfit: Outfit; gender:
       <div className="flex flex-wrap items-center gap-1.5">
         <select aria-label="Pose" value={pose} onChange={(e) => setPose(e.target.value)} className={sel}>
           {POSES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-        </select>
-        <select aria-label="Background" value={scene} onChange={(e) => setScene(e.target.value)} className={sel}>
-          {SCENES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
         </select>
         <button onClick={run} disabled={busy} className="inline-flex items-center gap-1.5 rounded-full bg-lime px-3 py-1.5 text-xs font-medium text-charcoal disabled:opacity-60">
           {busy ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}

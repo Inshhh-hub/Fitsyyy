@@ -56,7 +56,7 @@ export function ReplaceModal({ outfit, current, gender, onClose, onPick }: Props
                 <ProductThumb p={p} className="h-12 w-12 shrink-0" />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium">{p.name}</span>
-                  <span className="block truncate text-xs text-taupe">{p.brand} · {p.colour}{p.isSample ? " · sample" : ""}</span>
+                  <span className="block truncate text-xs text-taupe">{p.brand} · {p.colour}</span>
                 </span>
                 <span className="text-right">
                   <span className="block font-serif">{formatINR(p.price)}</span>

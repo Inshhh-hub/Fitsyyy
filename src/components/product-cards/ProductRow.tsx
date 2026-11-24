@@ -62,12 +62,11 @@ export function ProductRow({ item, wished, onWish, onReplace }: Props) {
           <div className="min-w-0">
             <p className="text-[11px] uppercase tracking-wide text-taupe">{SLOT_LABEL[item.slot]}</p>
             <p className="truncate text-sm font-medium">{item.name}</p>
-            <p className="truncate text-xs text-taupe-dark">{item.brand} · {item.merchant}</p>
+            <p className="truncate text-xs text-taupe-dark">{item.isSample ? item.brand : `${item.brand} · ${item.merchant}`}</p>
           </div>
           <p className="shrink-0 font-serif text-lg">{formatINR(item.price)}</p>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-2">
-          {item.isSample && <Badge tone="warn">Sample data</Badge>}
           {item.inStock === false && <Badge tone="warn">Out of stock</Badge>}
           {item.sizes?.length ? <span className="text-[11px] text-taupe">Sizes {item.sizes.join(", ")}</span> : null}
           <span className="flex-1" />
