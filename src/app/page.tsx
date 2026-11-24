@@ -1,13 +1,7 @@
 import { ArrowRight, Camera, Palette, Ruler, Shirt, ShieldCheck, Wallet } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Card } from "@/components/ui/primitives";
-import { OutfitPreview, type PreviewItem } from "@/components/outfit-cards/OutfitPreview";
-
-const HERO: PreviewItem[][] = [
-  [{ slot: "upper", hex: "#efe6d2", subtype: "Shirt" }, { slot: "lower", hex: "#1f2a44", subtype: "Trousers" }, { slot: "footwear", hex: "#6b4a32", subtype: "Loafers" }, { slot: "belt", hex: "#6b4a32", subtype: "Belt" }, { slot: "watch", hex: "#b8b8bc", subtype: "Watch" }],
-  [{ slot: "upper", hex: "#9aa88a", subtype: "Kurta" }, { slot: "outer", hex: "#d9c9a9", subtype: "Jacket" }, { slot: "lower", hex: "#efe6d2", subtype: "Pyjama" }, { slot: "footwear", hex: "#c9a24a", subtype: "Mojari" }],
-  [{ slot: "upper", hex: "#1f1f1f", subtype: "T-shirt" }, { slot: "outer", hex: "#6b7050", subtype: "Jacket" }, { slot: "lower", hex: "#3a3a3a", subtype: "Cargo" }, { slot: "footwear", hex: "#f3f0e8", subtype: "Sneakers" }, { slot: "eyewear", hex: "#1f1f1f", subtype: "Sunglasses" }],
-];
+import { HeroModels } from "@/components/outfit-cards/HeroModels";
 
 const STEPS = [
   { icon: Wallet, title: "Set your budget first", body: "Tell us what the whole outfit should cost, in rupees. Every look is built to stay inside it." },
@@ -38,13 +32,7 @@ export default function Home() {
           </div>
           <p className="mt-4 text-xs text-taupe">No account needed. Prices in INR.</p>
         </div>
-        <div className="grid grid-cols-3 gap-3">
-          {HERO.map((items, i) => (
-            <div key={i} className={i === 1 ? "mt-8" : ""}>
-              <OutfitPreview items={items} className="w-full rounded-3xl shadow-soft transition-transform duration-300 hover:-translate-y-1" />
-            </div>
-          ))}
-        </div>
+        <HeroModels />
       </section>
 
       <section id="how" className="scroll-mt-24">
